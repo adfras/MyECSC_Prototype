@@ -1,0 +1,3 @@
+﻿  main.c
+D:\EntityComponent\MyECSC_Prototype\main.c(90,37): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+  MyECSC_Prototype.vcxproj -> D:\EntityComponent\MyECSC_Prototype\x64\Debug\MyECSC_Prototype.exe
