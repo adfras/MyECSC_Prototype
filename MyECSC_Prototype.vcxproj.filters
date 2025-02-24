@@ -13,21 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\entity_manager">
+    <Filter Include="Source Files\EntityManager">
       <UniqueIdentifier>{2c594161-3257-421c-ba2c-a00d85bff169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ComponentArray">
+      <UniqueIdentifier>{fa32c8a9-748a-4161-b6cc-d71713558aa2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="entity.manager.c">
-      <Filter>Source Files\entity_manager</Filter>
+    <ClCompile Include="entity_manager.c">
+      <Filter>Source Files\EntityManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity_manager.h">
-      <Filter>Source Files\entity_manager</Filter>
+      <Filter>Source Files\EntityManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentArray.h">
+      <Filter>Source Files\ComponentArray</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
