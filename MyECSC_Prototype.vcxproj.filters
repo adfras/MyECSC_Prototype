@@ -19,6 +19,9 @@
     <Filter Include="Source Files\ComponentArray">
       <UniqueIdentifier>{fa32c8a9-748a-4161-b6cc-d71713558aa2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ComponentManager">
+      <UniqueIdentifier>{9a4c6392-bfb5-48bc-a923-d3f888eee8b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -27,6 +30,9 @@
     <ClCompile Include="entity_manager.c">
       <Filter>Source Files\EntityManager</Filter>
     </ClCompile>
+    <ClCompile Include="ComponentManager.c">
+      <Filter>Source Files\ComponentManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity_manager.h">
@@ -34,6 +40,18 @@
     </ClInclude>
     <ClInclude Include="ComponentArray.h">
       <Filter>Source Files\ComponentArray</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentTypes.h">
+      <Filter>Source Files\ComponentManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentManager.h">
+      <Filter>Source Files\ComponentManager</Filter>
+    </ClInclude>
+    <ClInclude Include="components.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Source Files\ComponentManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

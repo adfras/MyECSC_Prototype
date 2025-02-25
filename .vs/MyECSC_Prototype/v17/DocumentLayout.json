@@ -3,20 +3,40 @@
   "WorkspaceRootPath": "D:\\EntityComponent\\MyECSC_Prototype\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\ComponentArray.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:ComponentArray.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:entity_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:entity_manager.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\ComponentArray.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:ComponentArray.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\ComponentTypes.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:ComponentTypes.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:ComponentManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:ComponentManager.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\components.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:components.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\TransformComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:TransformComponent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{F677635E-4EC2-4FA0-94C8-B2F58CFFB8DA}|MyECSC_Prototype.vcxproj|solutionrelative:entity_manager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -31,12 +51,91 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "main.c",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\main.c",
+              "RelativeDocumentMoniker": "main.c",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\main.c",
+              "RelativeToolTip": "main.c",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAABgAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-02-23T04:13:54.664Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "TransformComponent.h",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\TransformComponent.h",
+              "RelativeDocumentMoniker": "TransformComponent.h",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\TransformComponent.h",
+              "RelativeToolTip": "TransformComponent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-25T08:59:12.646Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "components.h",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\components.h",
+              "RelativeDocumentMoniker": "components.h",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\components.h",
+              "RelativeToolTip": "components.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-25T08:53:30.495Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ComponentManager.c",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.c",
+              "RelativeDocumentMoniker": "ComponentManager.c",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.c",
+              "RelativeToolTip": "ComponentManager.c",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
+              "WhenOpened": "2025-02-25T08:11:14.664Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ComponentManager.h",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.h",
+              "RelativeDocumentMoniker": "ComponentManager.h",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentManager.h",
+              "RelativeToolTip": "ComponentManager.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-25T08:07:04.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ComponentTypes.h",
+              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentTypes.h",
+              "RelativeDocumentMoniker": "ComponentTypes.h",
+              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentTypes.h",
+              "RelativeToolTip": "ComponentTypes.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-02-25T07:58:42.858Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "ComponentArray.h",
               "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentArray.h",
               "RelativeDocumentMoniker": "ComponentArray.h",
               "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\ComponentArray.h",
               "RelativeToolTip": "ComponentArray.h",
-              "ViewState": "AgIAADgAAAAAAAAAAAAcwEEAAABhAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAYAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-02-24T07:32:25.435Z",
               "EditorCaption": ""
@@ -44,38 +143,25 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "main.c",
-              "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\main.c",
-              "RelativeDocumentMoniker": "main.c",
-              "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\main.c",
-              "RelativeToolTip": "main.c",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAAAB4AAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2025-02-23T04:13:54.664Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
               "Title": "entity_manager.c",
               "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.c",
               "RelativeDocumentMoniker": "entity_manager.c",
               "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.c",
               "RelativeToolTip": "entity_manager.c",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-02-23T04:37:43.43Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "entity_manager.h",
               "DocumentMoniker": "D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.h",
               "RelativeDocumentMoniker": "entity_manager.h",
               "ToolTip": "D:\\EntityComponent\\MyECSC_Prototype\\entity_manager.h",
               "RelativeToolTip": "entity_manager.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-02-23T04:37:21.24Z",
               "EditorCaption": ""
