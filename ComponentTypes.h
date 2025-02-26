@@ -11,7 +11,6 @@ typedef enum {
 	COMPONENT_AUDIO,
 	COMPONENT_SCRIPT,
 	COMPONENT_COUNT,
-	MAX_COMPONENT_TYPES,
 } ComponentType;
 
 

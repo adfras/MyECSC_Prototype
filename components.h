@@ -1,3 +1,4 @@
+#pragma once
 // Components.h
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
@@ -30,4 +31,4 @@ typedef struct {
 } Transform;
 
 #endif // COMPONENTS_H
-#pragma once
+

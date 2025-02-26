@@ -1,3 +1,5 @@
 D:\EntityComponent\MyECSC_Prototype\ComponentManager.c;D:\EntityComponent\MyECSC_Prototype\MyECSC_Prototype\x64\Debug\ComponentManager.obj
 D:\EntityComponent\MyECSC_Prototype\entity_manager.c;D:\EntityComponent\MyECSC_Prototype\MyECSC_Prototype\x64\Debug\entity_manager.obj
 D:\EntityComponent\MyECSC_Prototype\main.c;D:\EntityComponent\MyECSC_Prototype\MyECSC_Prototype\x64\Debug\main.obj
+D:\EntityComponent\MyECSC_Prototype\physics_system.c;D:\EntityComponent\MyECSC_Prototype\MyECSC_Prototype\x64\Debug\physics_system.obj
+D:\EntityComponent\MyECSC_Prototype\physics_system.h;D:\EntityComponent\MyECSC_Prototype\MyECSC_Prototype\x64\Debug\physics_system.obj

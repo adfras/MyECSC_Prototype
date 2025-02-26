@@ -132,6 +132,8 @@
     <ClCompile Include="main.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
+    <ClCompile Include="physics_system.c" />
+    <ClCompile Include="physics_system.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentArray.h" />
@@ -139,6 +141,9 @@
     <ClInclude Include="components.h" />
     <ClInclude Include="ComponentTypes.h" />
     <ClInclude Include="entity_manager.h" />
+    <ClInclude Include="physics_component.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="system_manager.h" />
     <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

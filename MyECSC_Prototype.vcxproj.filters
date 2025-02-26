@@ -22,6 +22,12 @@
     <Filter Include="Source Files\ComponentManager">
       <UniqueIdentifier>{9a4c6392-bfb5-48bc-a923-d3f888eee8b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\System">
+      <UniqueIdentifier>{5fab541b-7fbb-45dd-8313-e74f432b0e2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{98fa73de-90d8-4002-a4f6-75d19bbd7d26}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -32,6 +38,12 @@
     </ClCompile>
     <ClCompile Include="ComponentManager.c">
       <Filter>Source Files\ComponentManager</Filter>
+    </ClCompile>
+    <ClCompile Include="physics_system.h">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="physics_system.c">
+      <Filter>Source Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +64,15 @@
     </ClInclude>
     <ClInclude Include="TransformComponent.h">
       <Filter>Source Files\ComponentManager</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Source Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="system_manager.h">
+      <Filter>Source Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="physics_component.h">
+      <Filter>Source Files\Physics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

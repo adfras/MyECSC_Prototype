@@ -1,5 +1,5 @@
-﻿  ComponentManager.c
-  main.c
+﻿  main.c
+  physics_system.c
   Generating Code...
-  LINK : D:\EntityComponent\MyECSC_Prototype\x64\Debug\MyECSC_Prototype.exe not found or not built by the last incremental link; performing full link
+MyECSC_Prototype\x64\Debug\physics_system.obj : warning LNK4042: object specified more than once; extras ignored
   MyECSC_Prototype.vcxproj -> D:\EntityComponent\MyECSC_Prototype\x64\Debug\MyECSC_Prototype.exe
