@@ -29,15 +29,4 @@ void ComponentManager_EntityDestroyed(ComponentManager* mgr, uint32_t entity)
 	}
 }
 
-void ComponentManager_AddTransform(ComponentManager* cm, Entity entity, Transform component) {
-	// Retrieve the base pointer from the registered arrays.
-	IComponentArray* base = cm->componentArrays[COMPONENT_TRANSFORM];
-	assert(base && "Transform component array is not registered!");
-
-	// Cast the base pointer to the correct type.
-	TransformComponentArray* transformArray = (TransformComponentArray*)base;
-
-	// Insert the component into the transform array.
-	TransformComponentArray_Insert(transformArray, entity, component);
-}
 

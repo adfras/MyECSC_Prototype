@@ -22,9 +22,5 @@ void ComponentManager_RegisterComponent(ComponentManager* mgr, ComponentType typ
 // Notify all component arrays that an entity has been destroyed.
 void ComponentManager_EntityDestroyed(ComponentManager* mgr, uint32_t entity);
 
-void ComponentManager_AddTransform(ComponentManager* cm, Entity entity, Transform component);
-
-
-
 
 #endif

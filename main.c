@@ -1,96 +1,103 @@
-// main.c
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
-
+#include "coordinator.h"
 #include "entity_manager.h"
 #include "ComponentManager.h"
-#include "ComponentArray.h"
-#include "Components.h"
+#include "system_manager.h"
 #include "ComponentTypes.h"
 #include "TransformComponent.h"
 #include "physics_component.h"
 #include "physics_system.h"
-#include "system.h"
-#include "system_manager.h"
-
-
-#define MAX_ENTITIES 5000
+#include "Components.h"
 
 int main(void) {
-    // Initialize the Entity Manager.
+    // Allocate and initialize managers.
     EntityManager* entityManager = malloc(sizeof(EntityManager));
-    if (!entityManager) {
-        return 1; // Allocation failure.
-    }
+    if (!entityManager) return 1;
     EntityManager_Init(entityManager);
 
-    // Create the Component Manager.
-    ComponentManager componentManager = { 0 };
-
-    // Initialize and register the Transform component array.
-    TransformComponentArray transformArray;
-    TransformComponentArray_Init(&transformArray);
-    ComponentManager_RegisterComponent(&componentManager, COMPONENT_TRANSFORM, (IComponentArray*)&transformArray);
-
-    // Initialize and register the Physics component array.
-    PhysicsComponentArray physicsArray;
-    PhysicsComponentArray_Init(&physicsArray);
-    ComponentManager_RegisterComponent(&componentManager, COMPONENT_PHYSICS, (IComponentArray*)&physicsArray);
-
-    // Initialize the Physics System and pass the Component Manager to it.
-    PhysicsSystem physicsSystem;
-    PhysicsSystem_Init(&physicsSystem, &componentManager);
-
-    // Create an entity.
-    Entity entity = EntityManager_CreateEntity(entityManager);
-
-    // Set the entity's signature to include both Transform and Physics components.
-    Signature signature = (1 << COMPONENT_TRANSFORM) | (1 << COMPONENT_PHYSICS);
-    EntityManager_SetSignature(entityManager, entity, signature);
-    printf("Entity Manager: Entity %u created with signature %u\n", entity, EntityManager_GetSignature(entityManager, entity));
-
-    // Insert a Transform component.
-    Transform t = {
-        {1.0f, 2.0f, 3.0f},             // position
-        {0.0f, 0.0f, 0.0f, 1.0f},         // rotation
-        {1.0f, 1.0f, 1.0f}                // scale
-    };
-    TransformComponentArray_Insert(&transformArray, entity, t);
-
-    // Insert a Physics component.
-    Physics p = {
-        {0.0f, 0.0f, 0.0f},               // initial velocity
-        {0.0f, -9.8f, 0.0f}               // force (gravity)
-    };
-    PhysicsComponentArray_Insert(&physicsArray, entity, p);
-
-    // Manually add the entity to the physics system if its signature matches.
-    if ((signature & physicsSystem.base.requiredSignature) == physicsSystem.base.requiredSignature) {
-        physicsSystem.base.entities[physicsSystem.base.count++] = entity;
+    ComponentManager* componentManager = malloc(sizeof(ComponentManager));
+    if (!componentManager) return 1;
+    // Initialize all component array pointers to NULL.
+    for (int i = 0; i < MAX_COMPONENT_TYPES; i++) {
+        componentManager->componentArrays[i] = NULL;
     }
 
-    // Print the initial Transform position.
-    Transform* tr = TransformComponentArray_GetData(&transformArray, entity);
-    printf("Before update: Entity %u position: (%f, %f, %f)\n", entity, tr->position.x, tr->position.y, tr->position.z);
+    SystemManager* systemManager = malloc(sizeof(SystemManager));
+    if (!systemManager) return 1;
+    systemManager->count = 0;
 
-    // Update the Physics System with a delta time of 1.0 seconds.
-    PhysicsSystem_Update(&physicsSystem, 1.0f);
+    // Create and register the Transform component array.
+    TransformComponentArray* transformArray = malloc(sizeof(TransformComponentArray));
+    if (!transformArray) return 1;
+    TransformComponentArray_Init(transformArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_TRANSFORM, (IComponentArray*)transformArray);
 
-    // Print the updated Transform position.
-    tr = TransformComponentArray_GetData(&transformArray, entity);
-    printf("After update: Entity %u position: (%f, %f, %f)\n", entity, tr->position.x, tr->position.y, tr->position.z);
+    // Create and register the Physics component array.
+    PhysicsComponentArray* physicsArray = malloc(sizeof(PhysicsComponentArray));
+    if (!physicsArray) return 1;
+    PhysicsComponentArray_Init(physicsArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_PHYSICS, (IComponentArray*)physicsArray);
 
-    // Also print the updated Physics velocity.
-    Physics* ph = PhysicsComponentArray_GetData(&physicsArray, entity);
-    printf("After update: Entity %u velocity: (%f, %f, %f)\n", entity, ph->velocity.x, ph->velocity.y, ph->velocity.z);
+    // Create and register the Physics system.
+    PhysicsSystem* physicsSystem = malloc(sizeof(PhysicsSystem));
+    if (!physicsSystem) return 1;
+    PhysicsSystem_Init(physicsSystem, componentManager);
+    SystemManager_AddSystem(systemManager, (ECS_System*)physicsSystem);
 
-    // Simulate entity destruction.
-    ComponentManager_EntityDestroyed(&componentManager, entity);
-    EntityManager_DestroyEntity(entityManager, entity);
-    printf("Entity Manager: Destroyed entity %u. New signature: %u\n", entity, EntityManager_GetSignature(entityManager, entity));
+    // Initialize the coordinator with our managers.
+    Coordinator coordinator;
+    Coordinator_Init(&coordinator, entityManager, componentManager, systemManager);
 
+    // Create an entity via the coordinator.
+    Entity entity = Coordinator_CreateEntity(&coordinator);
+
+    // Add a Transform component (initial position (0,0,0)) via the coordinator.
+    Transform t = {
+        {0.0f, 0.0f, 0.0f},             // position
+        {0.0f, 0.0f, 0.0f, 1.0f},         // rotation (identity quaternion)
+        {1.0f, 1.0f, 1.0f}                // scale
+    };
+    Coordinator_AddTransform(&coordinator, entity, t);
+
+    // Add a Physics component (velocity (1,0,0) and zero force) via the coordinator.
+    Physics p = {
+        {1.0f, 0.0f, 0.0f},              // initial velocity along x-axis
+        {0.0f, 0.0f, 0.0f}               // no force applied
+    };
+    Coordinator_AddPhysics(&coordinator, entity, p);
+
+    // Retrieve and print the Transform component before updating.
+    Transform* transform = Coordinator_GetTransform(&coordinator, entity);
+    printf("Before update: Entity %u Transform position: (%f, %f, %f)\n",
+        entity,
+        transform->position.x, transform->position.y, transform->position.z);
+
+    // Update the Physics system (simulate one second elapsed).
+    PhysicsSystem_Update(physicsSystem, 1.0f);
+
+    // Retrieve and print the updated Transform and Physics components.
+    transform = Coordinator_GetTransform(&coordinator, entity);
+    Physics* physics = Coordinator_GetPhysics(&coordinator, entity);
+    printf("After update: Entity %u Transform position: (%f, %f, %f)\n",
+        entity,
+        transform->position.x, transform->position.y, transform->position.z);
+    printf("After update: Entity %u Physics velocity: (%f, %f, %f)\n",
+        entity,
+        physics->velocity.x, physics->velocity.y, physics->velocity.z);
+
+    // Destroy the entity via the coordinator.
+    Coordinator_DestroyEntity(&coordinator, entity);
+    printf("Entity %u destroyed.\n", entity);
+
+    // Clean up.
+    free(physicsSystem);
+    free(physicsArray);
+    free(transformArray);
+    free(systemManager);
+    free(componentManager);
     free(entityManager);
+
     return 0;
 }

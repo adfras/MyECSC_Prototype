@@ -16,9 +16,6 @@
     <Filter Include="Source Files\EntityManager">
       <UniqueIdentifier>{2c594161-3257-421c-ba2c-a00d85bff169}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ComponentArray">
-      <UniqueIdentifier>{fa32c8a9-748a-4161-b6cc-d71713558aa2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ComponentManager">
       <UniqueIdentifier>{9a4c6392-bfb5-48bc-a923-d3f888eee8b6}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,12 @@
     </Filter>
     <Filter Include="Source Files\Physics">
       <UniqueIdentifier>{98fa73de-90d8-4002-a4f6-75d19bbd7d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Macro">
+      <UniqueIdentifier>{fa32c8a9-748a-4161-b6cc-d71713558aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Coordinator">
+      <UniqueIdentifier>{9c65f4b4-583d-4637-8b80-7222e1f96b82}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -45,13 +48,16 @@
     <ClCompile Include="physics_system.c">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="coordinator.c">
+      <Filter>Source Files\Coordinator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity_manager.h">
       <Filter>Source Files\EntityManager</Filter>
     </ClInclude>
     <ClInclude Include="ComponentArray.h">
-      <Filter>Source Files\ComponentArray</Filter>
+      <Filter>Source Files\Macro</Filter>
     </ClInclude>
     <ClInclude Include="ComponentTypes.h">
       <Filter>Source Files\ComponentManager</Filter>
@@ -73,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="physics_component.h">
       <Filter>Source Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="coordinator.h">
+      <Filter>Source Files\Coordinator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
