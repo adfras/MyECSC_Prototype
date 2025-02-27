@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <time.h>
 #include "coordinator.h"
 #include "entity_manager.h"
 #include "ComponentManager.h"
 #include "system_manager.h"
 #include "ComponentTypes.h"
 #include "TransformComponent.h"
-#include "physics_component.h"
+#include "gravity_component.h"
+#include "rigid_body_component.h"
 #include "physics_system.h"
 #include "Components.h"
 
@@ -19,7 +20,6 @@ int main(void) {
 
     ComponentManager* componentManager = malloc(sizeof(ComponentManager));
     if (!componentManager) return 1;
-    // Initialize all component array pointers to NULL.
     for (int i = 0; i < MAX_COMPONENT_TYPES; i++) {
         componentManager->componentArrays[i] = NULL;
     }
@@ -28,17 +28,21 @@ int main(void) {
     if (!systemManager) return 1;
     systemManager->count = 0;
 
-    // Create and register the Transform component array.
+    // Register component arrays.
     TransformComponentArray* transformArray = malloc(sizeof(TransformComponentArray));
     if (!transformArray) return 1;
     TransformComponentArray_Init(transformArray);
     ComponentManager_RegisterComponent(componentManager, COMPONENT_TRANSFORM, (IComponentArray*)transformArray);
 
-    // Create and register the Physics component array.
-    PhysicsComponentArray* physicsArray = malloc(sizeof(PhysicsComponentArray));
-    if (!physicsArray) return 1;
-    PhysicsComponentArray_Init(physicsArray);
-    ComponentManager_RegisterComponent(componentManager, COMPONENT_PHYSICS, (IComponentArray*)physicsArray);
+    GravityComponentArray* gravityArray = malloc(sizeof(GravityComponentArray));
+    if (!gravityArray) return 1;
+    GravityComponentArray_Init(gravityArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_GRAVITY, (IComponentArray*)gravityArray);
+
+    RigidBodyComponentArray* rigidBodyArray = malloc(sizeof(RigidBodyComponentArray));
+    if (!rigidBodyArray) return 1;
+    RigidBodyComponentArray_Init(rigidBodyArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_RIGID_BODY, (IComponentArray*)rigidBodyArray);
 
     // Create and register the Physics system.
     PhysicsSystem* physicsSystem = malloc(sizeof(PhysicsSystem));
@@ -46,54 +50,76 @@ int main(void) {
     PhysicsSystem_Init(physicsSystem, componentManager);
     SystemManager_AddSystem(systemManager, (ECS_System*)physicsSystem);
 
-    // Initialize the coordinator with our managers.
+    // Initialize the coordinator.
     Coordinator coordinator;
     Coordinator_Init(&coordinator, entityManager, componentManager, systemManager);
 
-    // Create an entity via the coordinator.
-    Entity entity = Coordinator_CreateEntity(&coordinator);
+    // Set up randomization.
+    srand((unsigned)time(NULL));
+    int numEntities = 10000;
 
-    // Add a Transform component (initial position (0,0,0)) via the coordinator.
-    Transform t = {
-        {0.0f, 0.0f, 0.0f},             // position
-        {0.0f, 0.0f, 0.0f, 1.0f},         // rotation (identity quaternion)
-        {1.0f, 1.0f, 1.0f}                // scale
-    };
-    Coordinator_AddTransform(&coordinator, entity, t);
+    // Create 10,000 entities with randomized Gravity, RigidBody, and Transform.
+    for (int i = 0; i < numEntities; i++) {
+        Entity entity = Coordinator_CreateEntity(&coordinator);
 
-    // Add a Physics component (velocity (1,0,0) and zero force) via the coordinator.
-    Physics p = {
-        {1.0f, 0.0f, 0.0f},              // initial velocity along x-axis
-        {0.0f, 0.0f, 0.0f}               // no force applied
-    };
-    Coordinator_AddPhysics(&coordinator, entity, p);
+        // Random values:
+        // Position in range [-100, 100].
+        float randPosX = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
+        float randPosY = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
+        float randPosZ = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
+        // Rotation in range [0, 3].
+        float randRot = ((float)rand() / RAND_MAX) * 3.0f;
+        // Uniform scale in range [3, 5].
+        float scale = ((float)rand() / RAND_MAX) * 2.0f + 3.0f;
+        // Gravity force in range [-10, -1] on Y.
+        float randGravity = ((float)rand() / RAND_MAX) * (-9.0f) - 1.0f;
 
-    // Retrieve and print the Transform component before updating.
-    Transform* transform = Coordinator_GetTransform(&coordinator, entity);
-    printf("Before update: Entity %u Transform position: (%f, %f, %f)\n",
-        entity,
-        transform->position.x, transform->position.y, transform->position.z);
+        Gravity g = { { 0.0f, randGravity, 0.0f } };
+        RigidBody rb = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+        Transform t = { { randPosX, randPosY, randPosZ },
+                        { randRot, randRot, randRot },
+                        { scale, scale, scale } };
 
-    // Update the Physics system (simulate one second elapsed).
-    PhysicsSystem_Update(physicsSystem, 1.0f);
+        Coordinator_AddGravity(&coordinator, entity, g);
+        Coordinator_AddRigidBody(&coordinator, entity, rb);
+        Coordinator_AddTransform(&coordinator, entity, t);
+    }
 
-    // Retrieve and print the updated Transform and Physics components.
-    transform = Coordinator_GetTransform(&coordinator, entity);
-    Physics* physics = Coordinator_GetPhysics(&coordinator, entity);
-    printf("After update: Entity %u Transform position: (%f, %f, %f)\n",
-        entity,
-        transform->position.x, transform->position.y, transform->position.z);
-    printf("After update: Entity %u Physics velocity: (%f, %f, %f)\n",
-        entity,
-        physics->velocity.x, physics->velocity.y, physics->velocity.z);
+    // Main loop simulation.
+    // For demonstration, we run a fixed number of updates.
+ // Main loop simulation.
+    int quit = 0;
+    float dt = 0.016f; // Assumed delta time (~16ms per frame)
+    int iterations = 0;
+    while (!quit) {
+        // Optionally, measure dt with a high-resolution timer here.
 
-    // Destroy the entity via the coordinator.
-    Coordinator_DestroyEntity(&coordinator, entity);
-    printf("Entity %u destroyed.\n", entity);
+        // Update the physics system.
+        PhysicsSystem_Update(physicsSystem, dt);
 
-    // Clean up.
+        // --- Debug Printing ---
+        // Print the positions of the first few entities to verify they're updating.
+        for (int i = 0; i < 5; i++) {
+            // Retrieve the Transform component for entity i.
+            Transform* t = Coordinator_GetTransform(&coordinator, i);
+            if (t) {  // Ensure the component exists.
+                printf("Frame %d: Entity %d position: (%f, %f, %f)\n",
+                    iterations, i, t->position.x, t->position.y, t->position.z);
+            }
+        }
+        printf("\n");
+
+        // For demonstration, exit after 600 iterations.
+        iterations++;
+        if (iterations > 600) {
+            quit = 1;
+        }
+    }
+
+    // Cleanup.
     free(physicsSystem);
-    free(physicsArray);
+    free(rigidBodyArray);
+    free(gravityArray);
     free(transformArray);
     free(systemManager);
     free(componentManager);

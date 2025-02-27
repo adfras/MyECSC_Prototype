@@ -7,7 +7,7 @@
 #include <assert.h>
 
 // Define the maximum number of entities
-#define MAX_ENTITIES 5000
+#define MAX_ENTITIES 10000
 
 // Define an entity as an unsigned 32-bit integer
 

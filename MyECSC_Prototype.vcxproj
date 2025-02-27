@@ -143,7 +143,9 @@
     <ClInclude Include="ComponentTypes.h" />
     <ClInclude Include="coordinator.h" />
     <ClInclude Include="entity_manager.h" />
+    <ClInclude Include="gravity_component.h" />
     <ClInclude Include="physics_component.h" />
+    <ClInclude Include="rigid_body_component.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="system_manager.h" />
     <ClInclude Include="TransformComponent.h" />

@@ -7,6 +7,8 @@
 #include "ComponentTypes.h"
 #include "Components.h"
 #include "TransformComponent.h"
+#include "rigid_body_component.h"
+#include "gravity_component.h"
 #include "physics_component.h"
 
 // The Coordinator bundles all the managers.
@@ -33,5 +35,14 @@ Transform* Coordinator_GetTransform(Coordinator* coordinator, Entity entity);
 // Physics component management.
 void Coordinator_AddPhysics(Coordinator* coordinator, Entity entity, Physics component);
 Physics* Coordinator_GetPhysics(Coordinator* coordinator, Entity entity);
+
+// Gravity component management.
+void Coordinator_AddGravity(Coordinator* coordinator, Entity entity, Gravity component);
+Gravity* Coordinator_GetGravity(Coordinator* coordinator, Entity entity);
+
+// RigidBody component management.
+void Coordinator_AddRigidBody(Coordinator* coordinator, Entity entity, RigidBody component);
+RigidBody* Coordinator_GetRigidBody(Coordinator* coordinator, Entity entity);
+
 
 #endif // COORDINATOR_H

@@ -3,31 +3,34 @@
 
 void PhysicsSystem_Init(PhysicsSystem* psys, ComponentManager* cm) {
     psys->base.count = 0;
-    // Set the required signature: (1 << COMPONENT_TRANSFORM) for Transform and (1 << COMPONENT_PHYSICS) for Physics.
-    psys->base.requiredSignature = (1 << COMPONENT_TRANSFORM) | (1 << COMPONENT_PHYSICS);
+    // The system requires all three components.
+    psys->base.requiredSignature = (1 << COMPONENT_TRANSFORM) |
+        (1 << COMPONENT_RIGID_BODY) |
+        (1 << COMPONENT_GRAVITY);
     psys->componentManager = cm;
 }
 
 void PhysicsSystem_Update(PhysicsSystem* psys, float dt) {
     // Retrieve the component arrays from the ComponentManager.
     TransformComponentArray* transformArray = (TransformComponentArray*)psys->componentManager->componentArrays[COMPONENT_TRANSFORM];
-    PhysicsComponentArray* physicsArray = (PhysicsComponentArray*)psys->componentManager->componentArrays[COMPONENT_PHYSICS];
+    RigidBodyComponentArray* rigidBodyArray = (RigidBodyComponentArray*)psys->componentManager->componentArrays[COMPONENT_RIGID_BODY];
+    GravityComponentArray* gravityArray = (GravityComponentArray*)psys->componentManager->componentArrays[COMPONENT_GRAVITY];
 
     for (int i = 0; i < psys->base.count; i++) {
         Entity entity = psys->base.entities[i];
 
-        // Retrieve the Transform and Physics components.
         Transform* transform = TransformComponentArray_GetData(transformArray, entity);
-        Physics* physics = PhysicsComponentArray_GetData(physicsArray, entity);
+        RigidBody* rigidBody = RigidBodyComponentArray_GetData(rigidBodyArray, entity);
+        Gravity* gravity = GravityComponentArray_GetData(gravityArray, entity);
 
-        // Update position: position += velocity * dt.
-        transform->position.x += physics->velocity.x * dt;
-        transform->position.y += physics->velocity.y * dt;
-        transform->position.z += physics->velocity.z * dt;
+        // Update the position using the current velocity.
+        transform->position.x += rigidBody->velocity.x * dt;
+        transform->position.y += rigidBody->velocity.y * dt;
+        transform->position.z += rigidBody->velocity.z * dt;
 
-        // Update velocity: velocity += force * dt.
-        physics->velocity.x += physics->force.x * dt;
-        physics->velocity.y += physics->force.y * dt;
-        physics->velocity.z += physics->force.z * dt;
+        // Update the velocity based on gravity.
+        rigidBody->velocity.x += gravity->force.x * dt;
+        rigidBody->velocity.y += gravity->force.y * dt;
+        rigidBody->velocity.z += gravity->force.z * dt;
     }
 }

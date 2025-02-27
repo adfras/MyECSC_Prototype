@@ -1,17 +1,18 @@
 #ifndef PHYSICS_SYSTEM_H
 #define PHYSICS_SYSTEM_H
 
-#include "entity_manager.h"       // For Entity and Signature.
-#include "ComponentManager.h"     // For the ComponentManager.
-#include "ComponentTypes.h"       // For COMPONENT_TRANSFORM and COMPONENT_PHYSICS.
-#include "TransformComponent.h"   // Your existing transform component.
-#include "physics_component.h"     // The physics component we just defined.
-#include "system.h"               // Include the base ECS_System.
+#include "entity_manager.h"
+#include "ComponentManager.h"
+#include "ComponentTypes.h"
+#include "TransformComponent.h"
+#include "rigid_body_component.h"
+#include "gravity_component.h"
+#include "System.h"           
 
 // Base System structure.
 typedef struct {
-    ECS_System base;              // Our renamed base system.
-    ComponentManager* componentManager;  // To retrieve component arrays.
+    ECS_System base;  // Contains the entity list and the required signature.
+    ComponentManager* componentManager;
 } PhysicsSystem;
 
 // Initializes the physics system by setting its required signature and storing the ComponentManager.

@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#define MAX_ENTITIES 5000
+#define MAX_ENTITIES 10000
 
 // Base "interface" for component arrays.
 typedef struct IComponentArray {

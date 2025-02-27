@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Coordinator">
       <UniqueIdentifier>{9c65f4b4-583d-4637-8b80-7222e1f96b82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{9ed59cfa-6ce1-46e2-815a-9daf955489b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -82,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="coordinator.h">
       <Filter>Source Files\Coordinator</Filter>
+    </ClInclude>
+    <ClInclude Include="gravity_component.h">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="rigid_body_component.h">
+      <Filter>Source Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
