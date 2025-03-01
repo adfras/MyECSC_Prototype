@@ -32,10 +32,6 @@ void Coordinator_DestroyEntity(Coordinator* coordinator, Entity entity);
 void Coordinator_AddTransform(Coordinator* coordinator, Entity entity, Transform component);
 Transform* Coordinator_GetTransform(Coordinator* coordinator, Entity entity);
 
-// Physics component management.
-void Coordinator_AddPhysics(Coordinator* coordinator, Entity entity, Physics component);
-Physics* Coordinator_GetPhysics(Coordinator* coordinator, Entity entity);
-
 // Gravity component management.
 void Coordinator_AddGravity(Coordinator* coordinator, Entity entity, Gravity component);
 Gravity* Coordinator_GetGravity(Coordinator* coordinator, Entity entity);

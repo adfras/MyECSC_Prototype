@@ -1,3 +1,4 @@
+#include <SDL3/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -11,9 +12,13 @@
 #include "rigid_body_component.h"
 #include "physics_system.h"
 #include "Components.h"
+#include "render3d_system.h"
+
+// Global so render3d_system.c can use it
+SDL_Color entityColors[MAX_ENTITIES];
 
 int main(void) {
-    // Allocate and initialize managers.
+    // --- Initialize ECS Managers ---
     EntityManager* entityManager = malloc(sizeof(EntityManager));
     if (!entityManager) return 1;
     EntityManager_Init(entityManager);
@@ -28,7 +33,7 @@ int main(void) {
     if (!systemManager) return 1;
     systemManager->count = 0;
 
-    // Register component arrays.
+    // Register component arrays
     TransformComponentArray* transformArray = malloc(sizeof(TransformComponentArray));
     if (!transformArray) return 1;
     TransformComponentArray_Init(transformArray);
@@ -44,79 +49,122 @@ int main(void) {
     RigidBodyComponentArray_Init(rigidBodyArray);
     ComponentManager_RegisterComponent(componentManager, COMPONENT_RIGID_BODY, (IComponentArray*)rigidBodyArray);
 
-    // Create and register the Physics system.
+    // --- Register Systems ---
     PhysicsSystem* physicsSystem = malloc(sizeof(PhysicsSystem));
     if (!physicsSystem) return 1;
     PhysicsSystem_Init(physicsSystem, componentManager);
     SystemManager_AddSystem(systemManager, (ECS_System*)physicsSystem);
 
-    // Initialize the coordinator.
+    Render3DSystem render3dSystem;
+    Render3DSystem_Init(&render3dSystem, componentManager);
+    SystemManager_AddSystem(systemManager, (ECS_System*)&render3dSystem);
+
+    // Initialize the coordinator
     Coordinator coordinator;
     Coordinator_Init(&coordinator, entityManager, componentManager, systemManager);
 
-    // Set up randomization.
+    // Set up randomization
     srand((unsigned)time(NULL));
-    int numEntities = 10000;
+    int numEntities = 200;
 
-    // Create 10,000 entities with randomized Gravity, RigidBody, and Transform.
+    // Create entities with wide random positions, random rotations, negative Y gravity
     for (int i = 0; i < numEntities; i++) {
         Entity entity = Coordinator_CreateEntity(&coordinator);
 
-        // Random values:
-        // Position in range [-100, 100].
-        float randPosX = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
-        float randPosY = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
-        float randPosZ = ((float)rand() / RAND_MAX) * 200.0f - 100.0f;
-        // Rotation in range [0, 3].
-        float randRot = ((float)rand() / RAND_MAX) * 3.0f;
-        // Uniform scale in range [3, 5].
-        float scale = ((float)rand() / RAND_MAX) * 2.0f + 3.0f;
-        // Gravity force in range [-10, -1] on Y.
-        float randGravity = ((float)rand() / RAND_MAX) * (-9.0f) - 1.0f;
+        // Spread them out more in X and Y
+        float randPosX = ((float)rand() / RAND_MAX) * 300.0f - 150.0f;
+        float randPosY = ((float)rand() / RAND_MAX) * 300.0f - 150.0f;
+        float randPosZ = ((float)rand() / RAND_MAX) * 100.0f + 50.0f; 
 
-        Gravity g = { { 0.0f, randGravity, 0.0f } };
+        // Random 3-axis rotation
+        float randRotX = ((float)rand() / RAND_MAX) * 6.283185f;  // 0..2?
+        float randRotY = ((float)rand() / RAND_MAX) * 6.283185f;
+        float randRotZ = ((float)rand() / RAND_MAX) * 6.283185f;
+
+        
+        float scale = 5.0f;
+
+        // Gravity downward along Y
+        Gravity g = { { 0.0f, -9.8f, 0.0f } };
+
+        // No initial velocity
         RigidBody rb = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-        Transform t = { { randPosX, randPosY, randPosZ },
-                        { randRot, randRot, randRot },
-                        { scale, scale, scale } };
+
+        // Transform has position, rotation, scale
+        Transform t = {
+            { randPosX, randPosY, randPosZ },
+            { randRotX, randRotY, randRotZ },
+            { scale, scale, scale }
+        };
+
+        // Assign random color
+        entityColors[entity].r = rand() % 256;
+        entityColors[entity].g = rand() % 256;
+        entityColors[entity].b = rand() % 256;
+        entityColors[entity].a = 255;
 
         Coordinator_AddGravity(&coordinator, entity, g);
         Coordinator_AddRigidBody(&coordinator, entity, rb);
         Coordinator_AddTransform(&coordinator, entity, t);
     }
 
-    // Main loop simulation.
-    // For demonstration, we run a fixed number of updates.
- // Main loop simulation.
-    int quit = 0;
-    float dt = 0.016f; // Assumed delta time (~16ms per frame)
-    int iterations = 0;
-    while (!quit) {
-        // Optionally, measure dt with a high-resolution timer here.
-
-        // Update the physics system.
-        PhysicsSystem_Update(physicsSystem, dt);
-
-        // --- Debug Printing ---
-        // Print the positions of the first few entities to verify they're updating.
-        for (int i = 0; i < 5; i++) {
-            // Retrieve the Transform component for entity i.
-            Transform* t = Coordinator_GetTransform(&coordinator, i);
-            if (t) {  // Ensure the component exists.
-                printf("Frame %d: Entity %d position: (%f, %f, %f)\n",
-                    iterations, i, t->position.x, t->position.y, t->position.z);
-            }
-        }
-        printf("\n");
-
-        // For demonstration, exit after 600 iterations.
-        iterations++;
-        if (iterations > 600) {
-            quit = 1;
-        }
+    // ---- Initialize SDL3 ----
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+        return 1;
     }
 
-    // Cleanup.
+    SDL_Window* window = SDL_CreateWindow("Falling Blocks Demo", 1280, 720, 0);
+    if (!window) {
+        fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, "opengl");
+    if (!renderer) {
+        fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // Main loop
+    int quit = 0;
+    SDL_Event event;
+    float dt = 0.016f; // ~60 FPS
+    int iterations = 0;
+
+    while (!quit) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                quit = 1;
+            }
+        }
+
+        // Update physics
+        PhysicsSystem_Update(physicsSystem, dt);
+
+        // Clear screen
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        // Render 3D cubes
+        Render3DSystem_Update(&render3dSystem, dt, renderer, 1280, 720);
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(16);
+
+        iterations++;
+        if (iterations > 1000)
+            quit = 1;
+    }
+
+    // Cleanup
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
     free(physicsSystem);
     free(rigidBodyArray);
     free(gravityArray);

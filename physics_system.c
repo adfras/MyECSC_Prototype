@@ -3,7 +3,6 @@
 
 void PhysicsSystem_Init(PhysicsSystem* psys, ComponentManager* cm) {
     psys->base.count = 0;
-    // The system requires all three components.
     psys->base.requiredSignature = (1 << COMPONENT_TRANSFORM) |
         (1 << COMPONENT_RIGID_BODY) |
         (1 << COMPONENT_GRAVITY);

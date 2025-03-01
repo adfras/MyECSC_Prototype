@@ -50,6 +50,7 @@ Transform* Coordinator_GetTransform(Coordinator* coordinator, Entity entity) {
     return TransformComponentArray_GetData(transformArray, entity);
 }
 
+
 // --- Gravity Component Functions ---
 
 // Add a Gravity component to an entity.

@@ -34,6 +34,9 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{9ed59cfa-6ce1-46e2-815a-9daf955489b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Render3D">
+      <UniqueIdentifier>{08bb49ba-9164-441b-9e10-728c7bb78e3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -54,6 +57,9 @@
     <ClCompile Include="coordinator.c">
       <Filter>Source Files\Coordinator</Filter>
     </ClCompile>
+    <ClCompile Include="render3d_system.c">
+      <Filter>Source Files\Render3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="entity_manager.h">
@@ -67,9 +73,6 @@
     </ClInclude>
     <ClInclude Include="ComponentManager.h">
       <Filter>Source Files\ComponentManager</Filter>
-    </ClInclude>
-    <ClInclude Include="components.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="TransformComponent.h">
       <Filter>Source Files\ComponentManager</Filter>
@@ -90,6 +93,12 @@
       <Filter>Source Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="rigid_body_component.h">
+      <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="render3d_system.h">
+      <Filter>Source Files\Render3D</Filter>
+    </ClInclude>
+    <ClInclude Include="components.h">
       <Filter>Source Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
