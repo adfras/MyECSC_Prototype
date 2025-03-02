@@ -1,0 +1,38 @@
+# Ignore build outputs and binaries
+*.exe
+*.ilk
+*.tlog
+*.lastbuildstate
+*.recipe
+
+# Ignore compiled object files
+*.obj
+*.lib
+*.dll
+*.pdb
+*.idb
+
+# Ignore Visual Studio project files
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.tlog/
+.vs/
+*.backup.json
+
+# Ignore intermediate and generated files
+*.ipch
+*.log
+*.cache
+*.pch
+*.db
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore build directories
+x64/
+Debug/
+Release/
