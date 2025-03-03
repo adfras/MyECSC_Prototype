@@ -157,10 +157,14 @@
   <ItemGroup>
     <ClCompile Include="ComponentManager.c" />
     <ClCompile Include="coordinator.c" />
+    <ClCompile Include="debug_module.c" />
     <ClCompile Include="entity_manager.c" />
     <ClCompile Include="main.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
     </ClCompile>
+    <ClCompile Include="module.c" />
+    <ClCompile Include="module_interface.h" />
+    <ClCompile Include="module_loader.c" />
     <ClCompile Include="physics_system.c" />
     <ClCompile Include="physics_system.h" />
     <ClCompile Include="render3d_system.c" />
@@ -171,8 +175,10 @@
     <ClInclude Include="components.h" />
     <ClInclude Include="ComponentTypes.h" />
     <ClInclude Include="coordinator.h" />
+    <ClInclude Include="debug_module.h" />
     <ClInclude Include="entity_manager.h" />
     <ClInclude Include="gravity_component.h" />
+    <ClInclude Include="module.h" />
     <ClInclude Include="physics_component.h" />
     <ClInclude Include="render3d_system.h" />
     <ClInclude Include="rigid_body_component.h" />

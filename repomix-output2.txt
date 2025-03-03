@@ -1,0 +1,1399 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+================================================================
+File Summary
+================================================================
+
+Purpose:
+--------
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+
+File Format:
+------------
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Multiple file entries, each consisting of:
+  a. A separator line (================)
+  b. The file path (File: path/to/file)
+  c. Another separator line
+  d. The full contents of the file
+  e. A blank line
+
+Usage Guidelines:
+-----------------
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+
+Notes:
+------
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+
+Additional Info:
+----------------
+
+================================================================
+Directory Structure
+================================================================
+.gitattributes
+.gitignore
+ComponentArray.h
+ComponentManager.c
+ComponentManager.h
+components.h
+ComponentTypes.h
+coordinator.c
+coordinator.h
+debug_module.c
+entity_manager.c
+entity_manager.h
+gravity_component.h
+main.c
+module_interface.h
+module_loader.c
+module.c
+module.h
+physics_component.h
+physics_system.c
+physics_system.h
+render3d_system.c
+render3d_system.h
+rigid_body_component.h
+system_manager.h
+System.h
+TransformComponent.h
+
+================================================================
+Files
+================================================================
+
+================
+File: .gitattributes
+================
+# Auto detect text files and perform LF normalization
+* text=auto
+
+================
+File: .gitignore
+================
+# Ignore build outputs and binaries
+*.exe
+*.ilk
+*.tlog
+*.lastbuildstate
+*.recipe
+
+# Ignore compiled object files
+*.obj
+*.lib
+*.dll
+*.pdb
+*.idb
+
+# Ignore Visual Studio project files
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.tlog/
+.vs/
+*.backup.json
+
+# Ignore intermediate and generated files
+*.ipch
+*.log
+*.cache
+*.pch
+*.db
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore build directories
+x64/
+Debug/
+Release/
+
+repomix-output.txt
+
+================
+File: ComponentArray.h
+================
+#pragma once
+
+#ifndef COMPONENT_ARRAY_H
+#define COMPONENT_ARRAY_H
+
+#include <stdint.h>
+#include <assert.h>
+#include <stdlib.h>
+
+#define MAX_ENTITIES 10000
+
+// Base "interface" for component arrays.
+typedef struct IComponentArray {
+    void (*EntityDestroyed)(struct IComponentArray* self, uint32_t entity);
+} IComponentArray;
+
+// Macro to define a component array for any component type.
+#define DEFINE_COMPONENT_ARRAY(ComponentType)                                                   \
+    typedef struct {                                                                            \
+        IComponentArray base;              /* Base interface */                                 \
+        ComponentType components[MAX_ENTITIES]; /* Dense array of components */                   \
+        int entityToIndexMap[MAX_ENTITIES];  /* Maps an entity to its index (-1 if absent) */      \
+        uint32_t indexToEntityMap[MAX_ENTITIES]; /* Reverse mapping: index to entity */            \
+        size_t size;                       /* Number of valid components */                     \
+    } ComponentType##ComponentArray;                                                            \
+                                                                                                \
+    /* Forward declaration of the EntityDestroyed function */                                   \
+    static inline void ComponentType##ComponentArray_EntityDestroyed(IComponentArray* base, uint32_t entity); \
+                                                                                                \
+    /* Initialization function for a component array */                                         \
+    static inline void ComponentType##ComponentArray_Init(ComponentType##ComponentArray* arr) {   \
+        arr->base.EntityDestroyed = (void (*)(IComponentArray*, uint32_t))                       \
+            ComponentType##ComponentArray_EntityDestroyed;                                      \
+        arr->size = 0;                                                                          \
+        for (int i = 0; i < MAX_ENTITIES; i++) {                                                \
+            arr->entityToIndexMap[i] = -1;                                                      \
+        }                                                                                       \
+    }                                                                                           \
+                                                                                                \
+    /* Insert a component into the array */                                                     \
+    static inline void ComponentType##ComponentArray_Insert(ComponentType##ComponentArray* arr,    \
+                                                             uint32_t entity,                 \
+                                                             ComponentType component) {       \
+        assert(arr->entityToIndexMap[entity] == -1 && "Component already exists for entity.");   \
+        size_t newIndex = arr->size;                                                            \
+        arr->entityToIndexMap[entity] = (int)newIndex; /* cast to int to avoid warning */        \
+        arr->indexToEntityMap[newIndex] = entity;                                               \
+        arr->components[newIndex] = component;                                                  \
+        arr->size++;                                                                            \
+    }                                                                                           \
+                                                                                                \
+    /* Remove a component from the array */                                                     \
+    static inline void ComponentType##ComponentArray_RemoveData(ComponentType##ComponentArray* arr, \
+                                                                  uint32_t entity) {             \
+        assert(arr->entityToIndexMap[entity] != -1 && "Component does not exist for entity.");   \
+        int indexOfRemovedEntity = arr->entityToIndexMap[entity];                               \
+        size_t indexOfLastElement = arr->size - 1;                                                \
+        /* Move the last component into the place of the removed component. */                  \
+        arr->components[indexOfRemovedEntity] = arr->components[indexOfLastElement];              \
+        /* Update the mapping for the entity that moved. */                                     \
+        uint32_t entityOfLastElement = arr->indexToEntityMap[indexOfLastElement];                 \
+        arr->entityToIndexMap[entityOfLastElement] = indexOfRemovedEntity;                        \
+        arr->indexToEntityMap[indexOfRemovedEntity] = entityOfLastElement;                        \
+        /* Mark the removed entity as having no component. */                                   \
+        arr->entityToIndexMap[entity] = -1;                                                       \
+        arr->size--;                                                                            \
+    }                                                                                           \
+                                                                                                \
+    /* Retrieve a pointer to a component from the array */                                      \
+    static inline ComponentType* ComponentType##ComponentArray_GetData(ComponentType##ComponentArray* arr, \
+                                                                         uint32_t entity) {          \
+        assert(arr->entityToIndexMap[entity] != -1 && "Component does not exist for entity.");   \
+        int index = arr->entityToIndexMap[entity];                                               \
+        return &arr->components[index];                                                          \
+    }                                                                                           \
+                                                                                                \
+    /* Callback function for when an entity is destroyed */                                     \
+    static inline void ComponentType##ComponentArray_EntityDestroyed(IComponentArray* base,      \
+                                                                      uint32_t entity) {         \
+        ComponentType##ComponentArray* arr = (ComponentType##ComponentArray*)base;              \
+        if (arr->entityToIndexMap[entity] != -1) {                                                \
+            ComponentType##ComponentArray_RemoveData(arr, entity);                              \
+        }                                                                                       \
+    }
+
+#endif // COMPONENT_ARRAY_H
+
+================
+File: ComponentManager.c
+================
+//ComponentManager.c
+#include "ComponentManager.h"
+#include "ComponentArray.h"
+#include "Components.h" 
+#include "TransformComponent.h" 
+
+#include <assert.h>
+
+// Register a component array for a given type.
+void ComponentManager_RegisterComponent(ComponentManager* mgr, ComponentType type, IComponentArray* array)
+{
+	assert(type < MAX_COMPONENT_TYPES && "Component type out of range.");
+	mgr->componentArrays[type] = array;
+}
+
+// Notify all component arrays that an entity has been destroyed.
+void ComponentManager_EntityDestroyed(ComponentManager* mgr, uint32_t entity)
+{
+	for (int i = 0; i < MAX_COMPONENT_TYPES; i++)
+	{
+		if (mgr->componentArrays[i]) 
+			{
+			// Call the EntityDestroyed function pointer on each registered component array
+			mgr->componentArrays[i]->EntityDestroyed(mgr->componentArrays[i], entity);
+			}
+		{
+
+		}
+	}
+}
+
+================
+File: ComponentManager.h
+================
+#pragma once
+
+#ifndef COMPONENT_MANAGER_H
+#define COMPONENT_MANAGER_H
+
+#include <stdint.h>
+#include "ComponentArray.h"      // Contains the base IComponentArray struct.
+#include "ComponentTypes.h"      // Contains the ComponentType enum.
+#include "Components.h"          // Now includes definitions for Entity and Transform.
+
+// Define the maximum number of entities
+#define MAX_COMPONENT_TYPES 32
+
+// The ComponentManager is a collection of component arrays.
+typedef struct ComponentManager {
+	IComponentArray* componentArrays[MAX_COMPONENT_TYPES];
+} ComponentManager;
+
+// Register a component array for a given type.
+void ComponentManager_RegisterComponent(ComponentManager* mgr, ComponentType type, IComponentArray* componentArray);
+
+// Notify all component arrays that an entity has been destroyed.
+void ComponentManager_EntityDestroyed(ComponentManager* mgr, uint32_t entity);
+
+
+#endif
+
+================
+File: components.h
+================
+#pragma once
+// Components.h
+#ifndef COMPONENTS_H
+#define COMPONENTS_H
+
+#include <stdint.h>
+
+// Define the Entity type.
+typedef uint32_t Entity;
+
+// Define a 3D vector.
+typedef struct {
+    float x;
+    float y;
+    float z;
+} Vec3;
+
+// Define a quaternion.
+typedef struct {
+    float x;
+    float y;
+    float z;
+    float w;
+} Quat;
+
+// Define the Transform component.
+typedef struct {
+    Vec3 position;
+    Quat rotation;
+    Vec3 scale;
+} Transform;
+
+#endif // COMPONENTS_H
+
+================
+File: ComponentTypes.h
+================
+#pragma once
+
+#ifndef COMPONENT_TYPES_H
+#define COMPONENT_TYPES_H
+
+typedef enum {
+    COMPONENT_TRANSFORM = 0,
+    COMPONENT_RIGID_BODY,
+    COMPONENT_GRAVITY,
+    COMPONENT_COUNT,
+} ComponentType;
+
+#endif // COMPONENT_TYPES_H
+
+================
+File: coordinator.c
+================
+#include "coordinator.h"
+#include <assert.h>
+
+// Initialize the Coordinator with pointers to the managers.
+void Coordinator_Init(Coordinator* coordinator,
+    EntityManager* entityManager,
+    ComponentManager* componentManager,
+    SystemManager* systemManager)
+{
+    coordinator->entityManager = entityManager;
+    coordinator->componentManager = componentManager;
+    coordinator->systemManager = systemManager;
+}
+
+// Create a new entity using the Entity Manager.
+Entity Coordinator_CreateEntity(Coordinator* coordinator) {
+    return EntityManager_CreateEntity(coordinator->entityManager);
+}
+
+// Destroy an entity and notify all managers.
+void Coordinator_DestroyEntity(Coordinator* coordinator, Entity entity) {
+    EntityManager_DestroyEntity(coordinator->entityManager, entity);
+    ComponentManager_EntityDestroyed(coordinator->componentManager, entity);
+    SystemManager_EntityDestroyed(coordinator->systemManager, entity);
+}
+
+// --- Transform Component Functions ---
+
+// Add a Transform component to an entity.
+void Coordinator_AddTransform(Coordinator* coordinator, Entity entity, Transform component) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_TRANSFORM];
+    assert(base && "Transform component array not registered.");
+    TransformComponentArray* transformArray = (TransformComponentArray*)base;
+    TransformComponentArray_Insert(transformArray, entity, component);
+
+    // Update the entity's signature.
+    Signature signature = EntityManager_GetSignature(coordinator->entityManager, entity);
+    signature |= (1 << COMPONENT_TRANSFORM);
+    EntityManager_SetSignature(coordinator->entityManager, entity, signature);
+
+    // Notify systems about the signature change.
+    SystemManager_EntitySignatureChanged(coordinator->systemManager, entity, signature);
+}
+
+// Retrieve a pointer to the Transform component of an entity.
+Transform* Coordinator_GetTransform(Coordinator* coordinator, Entity entity) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_TRANSFORM];
+    assert(base && "Transform component array not registered.");
+    TransformComponentArray* transformArray = (TransformComponentArray*)base;
+    return TransformComponentArray_GetData(transformArray, entity);
+}
+
+
+// --- Gravity Component Functions ---
+
+// Add a Gravity component to an entity.
+void Coordinator_AddGravity(Coordinator* coordinator, Entity entity, Gravity component) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_GRAVITY];
+    assert(base && "Gravity component array not registered.");
+    GravityComponentArray* gravityArray = (GravityComponentArray*)base;
+    GravityComponentArray_Insert(gravityArray, entity, component);
+
+    // Update the entity's signature.
+    Signature signature = EntityManager_GetSignature(coordinator->entityManager, entity);
+    signature |= (1 << COMPONENT_GRAVITY);
+    EntityManager_SetSignature(coordinator->entityManager, entity, signature);
+
+    // Notify systems about the signature change.
+    SystemManager_EntitySignatureChanged(coordinator->systemManager, entity, signature);
+}
+
+// Retrieve a pointer to the Gravity component of an entity.
+Gravity* Coordinator_GetGravity(Coordinator* coordinator, Entity entity) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_GRAVITY];
+    assert(base && "Gravity component array not registered.");
+    GravityComponentArray* gravityArray = (GravityComponentArray*)base;
+    return GravityComponentArray_GetData(gravityArray, entity);
+}
+
+// --- RigidBody Component Functions ---
+
+// Add a RigidBody component to an entity.
+void Coordinator_AddRigidBody(Coordinator* coordinator, Entity entity, RigidBody component) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_RIGID_BODY];
+    assert(base && "RigidBody component array not registered.");
+    RigidBodyComponentArray* rbArray = (RigidBodyComponentArray*)base;
+    RigidBodyComponentArray_Insert(rbArray, entity, component);
+
+    // Update the entity's signature.
+    Signature signature = EntityManager_GetSignature(coordinator->entityManager, entity);
+    signature |= (1 << COMPONENT_RIGID_BODY);
+    EntityManager_SetSignature(coordinator->entityManager, entity, signature);
+
+    // Notify systems about the signature change.
+    SystemManager_EntitySignatureChanged(coordinator->systemManager, entity, signature);
+}
+
+// Retrieve a pointer to the RigidBody component of an entity.
+RigidBody* Coordinator_GetRigidBody(Coordinator* coordinator, Entity entity) {
+    IComponentArray* base = coordinator->componentManager->componentArrays[COMPONENT_RIGID_BODY];
+    assert(base && "RigidBody component array not registered.");
+    RigidBodyComponentArray* rbArray = (RigidBodyComponentArray*)base;
+    return RigidBodyComponentArray_GetData(rbArray, entity);
+}
+
+================
+File: coordinator.h
+================
+#ifndef COORDINATOR_H
+#define COORDINATOR_H
+
+#include "entity_manager.h"
+#include "ComponentManager.h"
+#include "system_manager.h"
+#include "ComponentTypes.h"
+#include "Components.h"
+#include "TransformComponent.h"
+#include "rigid_body_component.h"
+#include "gravity_component.h"
+#include "physics_component.h"
+
+// The Coordinator bundles all the managers.
+typedef struct {
+    EntityManager* entityManager;
+    ComponentManager* componentManager;
+    SystemManager* systemManager;
+} Coordinator;
+
+// Initialization.
+void Coordinator_Init(Coordinator* coordinator,
+    EntityManager* entityManager,
+    ComponentManager* componentManager,
+    SystemManager* systemManager);
+
+// Entity management.
+Entity Coordinator_CreateEntity(Coordinator* coordinator);
+void Coordinator_DestroyEntity(Coordinator* coordinator, Entity entity);
+
+// Transform component management.
+void Coordinator_AddTransform(Coordinator* coordinator, Entity entity, Transform component);
+Transform* Coordinator_GetTransform(Coordinator* coordinator, Entity entity);
+
+// Gravity component management.
+void Coordinator_AddGravity(Coordinator* coordinator, Entity entity, Gravity component);
+Gravity* Coordinator_GetGravity(Coordinator* coordinator, Entity entity);
+
+// RigidBody component management.
+void Coordinator_AddRigidBody(Coordinator* coordinator, Entity entity, RigidBody component);
+RigidBody* Coordinator_GetRigidBody(Coordinator* coordinator, Entity entity);
+
+
+#endif // COORDINATOR_H
+
+================
+File: debug_module.c
+================
+// debug_module.c
+#include <stdio.h>
+#include <stdlib.h>
+#include "coordinator.h"
+#include "System.h"
+#include "module_interface.h"
+
+typedef struct {
+    ECS_System base;
+    // Add any debug-specific data if needed.
+} DebugSystem;
+
+void DebugSystem_Update(ECS_System* sys, float dt) {
+    DebugSystem* ds = (DebugSystem*)sys;
+    // Print the system pointer and count to verify it's valid.
+    printf("DebugSystem_Update: ds=%p, count=%d, dt=%.3f\n", (void*)ds, ds->base.count, dt);
+}
+
+void DebugSystem_Init(DebugSystem* ds) {
+    ds->base.count = 0;
+    ds->base.requiredSignature = 0;  // No components required for debugging.
+    ds->base.update = DebugSystem_Update;
+}
+
+void register_module(Coordinator* coordinator) {
+    DebugSystem* debugSys = malloc(sizeof(DebugSystem));
+    if (!debugSys) {
+        fprintf(stderr, "Failed to allocate DebugSystem\n");
+        return;
+    }
+    DebugSystem_Init(debugSys);
+    SystemManager_AddSystem(coordinator->systemManager, (ECS_System*)debugSys);
+    printf("Debug module registered with ECS.\n");
+}
+
+================
+File: entity_manager.c
+================
+#include "entity_manager.h"
+
+void EntityManager_Init(EntityManager *manager) {
+    for (Entity i = 0; i < MAX_ENTITIES; i++) {
+        manager->availableEntities[i] = i;
+        manager->signatures[i] = 0; // No components initially.
+    }
+    manager->head = 0;
+    manager->tail = 0; // When the queue is full, head == tail.
+    manager->count = MAX_ENTITIES;
+    manager->LivingEntityCount = 0;
+}
+
+Entity EntityManager_CreateEntity(EntityManager *manager) {
+	assert(manager->LivingEntityCount < MAX_ENTITIES && "Too many entities in existence.");
+	assert(manager->count > 0 && "Ran out of available entities.");
+
+	// Take an ID from the front of the queue.
+	Entity id = manager->availableEntities[manager->head];
+	manager->head = (manager->head + 1) % MAX_ENTITIES;
+	manager->count--;
+	manager->LivingEntityCount++;
+	return id;
+}
+
+void EntityManager_DestroyEntity(EntityManager *manager, Entity entity) {
+	assert(entity < MAX_ENTITIES && "Entity out of range.");
+	// Invalidate the destroyed entity's signature.
+	manager->signatures[entity] = 0;
+	// Put the destroyed ID at the back of the queue.
+	manager->availableEntities[manager->tail] = entity;
+	manager->tail = (manager->tail + 1) % MAX_ENTITIES;
+	manager->count++;
+	manager->LivingEntityCount--;
+}
+
+void EntityManager_SetSignature(EntityManager *manager, Entity entity, Signature signature) {
+	assert(entity < MAX_ENTITIES && "Entity out of range.");
+	manager->signatures[entity] = signature;
+}
+
+Signature EntityManager_GetSignature(EntityManager *manager, Entity entity) {
+	assert(entity < MAX_ENTITIES && "Entity out of range.");
+	return manager->signatures[entity];
+}
+
+================
+File: entity_manager.h
+================
+#pragma once
+#ifndef ENTITY_MANAGER_H
+#define ENTITY_MANAGER_H
+
+#include <stdint.h>
+#include <stdio.h>
+#include <assert.h>
+
+// Define the maximum number of entities
+#define MAX_ENTITIES 10000
+
+// Define an entity as an unsigned 32-bit integer
+
+typedef uint32_t Entity;
+
+// Define a signature as an unsigned 32-bit integer
+
+typedef uint32_t Signature;
+
+// The EntityManager holds available IDs, an array of signatures (one for each entity), and a counts
+typedef struct
+{
+	Entity availableEntities[MAX_ENTITIES];
+	int head;
+	int tail;
+	int count;
+	Signature signatures[MAX_ENTITIES]; // each entity has a signature
+	uint32_t LivingEntityCount;
+} EntityManager;
+
+
+// Initialize the EntityManager
+void EntityManager_Init(EntityManager *manager);
+
+// Create a new entity by returning the next available ID
+Entity EntityManager_CreateEntity(EntityManager *manager);
+
+// Destroy an entity by adding its ID to the available IDs
+void EntityManager_DestroyEntity(EntityManager *manager, Entity entity);
+
+// Set the signature of an entity
+void EntityManager_SetSignature(EntityManager *manager, Entity entity, Signature signature);
+
+// Get the signature of an entity
+Signature EntityManager_GetSignature(EntityManager *manager, Entity entity);
+
+
+#endif // !ENTITY_MANAGER_H
+
+================
+File: gravity_component.h
+================
+#ifndef GRAVITY_COMPONENT_H
+#define GRAVITY_COMPONENT_H
+
+#include "components.h"
+#include "ComponentArray.h"
+
+typedef struct {
+    Vec3 force;
+} Gravity;
+
+DEFINE_COMPONENT_ARRAY(Gravity);
+
+#endif // GRAVITY_COMPONENT_H
+
+================
+File: main.c
+================
+#include <SDL3/SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include "coordinator.h"
+#include "entity_manager.h"
+#include "ComponentManager.h"
+#include "system_manager.h"
+#include "ComponentTypes.h"
+#include "TransformComponent.h"
+#include "gravity_component.h"
+#include "rigid_body_component.h"
+#include "physics_system.h"
+#include "Components.h"
+#include "render3d_system.h"
+#include "module_interface.h"  
+
+// Global so render3d_system.c can use it
+SDL_Color entityColors[MAX_ENTITIES];
+
+// Forward declaration of the debug module registration function.
+void register_module(Coordinator* coordinator);
+
+int main(void) {
+    // --- Initialize ECS Managers ---
+    EntityManager* entityManager = malloc(sizeof(EntityManager));
+    if (!entityManager) return 1;
+    EntityManager_Init(entityManager);
+
+    ComponentManager* componentManager = malloc(sizeof(ComponentManager));
+    if (!componentManager) return 1;
+    for (int i = 0; i < MAX_COMPONENT_TYPES; i++) {
+        componentManager->componentArrays[i] = NULL;
+    }
+
+    SystemManager* systemManager = malloc(sizeof(SystemManager));
+    if (!systemManager) return 1;
+    systemManager->count = 0;
+
+    // Register component arrays
+    TransformComponentArray* transformArray = malloc(sizeof(TransformComponentArray));
+    if (!transformArray) return 1;
+    TransformComponentArray_Init(transformArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_TRANSFORM, (IComponentArray*)transformArray);
+
+    GravityComponentArray* gravityArray = malloc(sizeof(GravityComponentArray));
+    if (!gravityArray) return 1;
+    GravityComponentArray_Init(gravityArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_GRAVITY, (IComponentArray*)gravityArray);
+
+    RigidBodyComponentArray* rigidBodyArray = malloc(sizeof(RigidBodyComponentArray));
+    if (!rigidBodyArray) return 1;
+    RigidBodyComponentArray_Init(rigidBodyArray);
+    ComponentManager_RegisterComponent(componentManager, COMPONENT_RIGID_BODY, (IComponentArray*)rigidBodyArray);
+
+    // --- Register Systems ---
+    PhysicsSystem* physicsSystem = malloc(sizeof(PhysicsSystem));
+    if (!physicsSystem) return 1;
+    PhysicsSystem_Init(physicsSystem, componentManager);
+    SystemManager_AddSystem(systemManager, (ECS_System*)physicsSystem);
+
+    Render3DSystem render3dSystem;
+    Render3DSystem_Init(&render3dSystem, componentManager);
+    SystemManager_AddSystem(systemManager, (ECS_System*)&render3dSystem);
+
+    // Initialize the coordinator
+    Coordinator coordinator;
+    Coordinator_Init(&coordinator, entityManager, componentManager, systemManager);
+
+    // Register Modules 
+    register_module(&coordinator);
+
+    // Set up randomization
+    srand((unsigned)time(NULL));
+    int numEntities = 200;
+
+    // Create entities with wide random positions, random rotations, negative Y gravity
+    for (int i = 0; i < numEntities; i++) {
+        Entity entity = Coordinator_CreateEntity(&coordinator);
+
+        // Spread them out more in X and Y
+        float randPosX = ((float)rand() / RAND_MAX) * 300.0f - 150.0f;
+        float randPosY = ((float)rand() / RAND_MAX) * 300.0f - 150.0f;
+        float randPosZ = ((float)rand() / RAND_MAX) * 100.0f + 50.0f; 
+
+        // Random 3-axis rotation
+        float randRotX = ((float)rand() / RAND_MAX) * 6.283185f;  // 0..2?
+        float randRotY = ((float)rand() / RAND_MAX) * 6.283185f;
+        float randRotZ = ((float)rand() / RAND_MAX) * 6.283185f;
+
+        
+        float scale = 5.0f;
+
+        // Gravity downward along Y
+        Gravity g = { { 0.0f, -9.8f, 0.0f } };
+
+        // No initial velocity
+        RigidBody rb = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
+
+        // Transform has position, rotation, scale
+        Transform t = {
+            { randPosX, randPosY, randPosZ },
+            { randRotX, randRotY, randRotZ },
+            { scale, scale, scale }
+        };
+
+        // Assign random color
+        entityColors[entity].r = rand() % 256;
+        entityColors[entity].g = rand() % 256;
+        entityColors[entity].b = rand() % 256;
+        entityColors[entity].a = 255;
+
+        Coordinator_AddGravity(&coordinator, entity, g);
+        Coordinator_AddRigidBody(&coordinator, entity, rb);
+        Coordinator_AddTransform(&coordinator, entity, t);
+    }
+
+    // ---- Initialize SDL3 ----
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
+        return 1;
+    }
+
+    SDL_Window* window = SDL_CreateWindow("Falling Blocks Demo", 1280, 720, 0);
+    if (!window) {
+        fprintf(stderr, "SDL_CreateWindow Error: %s\n", SDL_GetError());
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, "opengl");
+    if (!renderer) {
+        fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // Main loop
+    int quit = 0;
+    SDL_Event event;
+    float dt = 0.016f; // ~60 FPS
+    int iterations = 0;
+
+    while (!quit) {
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) {
+                quit = 1;
+            }
+        }
+
+        // Update each registered system if an update function exists.
+        for (int i = 0; i < systemManager->count; i++) {
+            ECS_System* sys = systemManager->systems[i];
+            if (sys && sys->update) {
+                sys->update(sys, dt);
+            }
+            else {
+                printf("Warning: System at index %d is NULL or has no update function.\n", i);
+            }
+        }
+
+        // Update physics
+        PhysicsSystem_Update(physicsSystem, dt);
+
+        // Clear screen
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderClear(renderer);
+
+        // Render 3D cubes
+        Render3DSystem_Update(&render3dSystem, dt, renderer, 1280, 720);
+
+        SDL_RenderPresent(renderer);
+        SDL_Delay(16);
+
+        iterations++;
+        if (iterations > 1000)
+            quit = 1;
+    }
+
+    // Cleanup
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    free(physicsSystem);
+    free(rigidBodyArray);
+    free(gravityArray);
+    free(transformArray);
+    free(systemManager);
+    free(componentManager);
+    free(entityManager);
+
+    return 0;
+}
+
+================
+File: module_interface.h
+================
+// module interface.h
+#ifndef MODULE_INTERFACE_H
+#define MODULE_INTERFACE_H
+
+#include "coordinator.h"
+
+// All modules must export a function signature like this
+
+typedef void (*ModuleRegisterFunc)(Coordinator* coordinator);
+
+
+#endif // !MODULE_INTERFACE_H
+
+================
+File: module_loader.c
+================
+// module_loader.c
+#include <windows.h>
+#include <stdio.h>
+#include "coordinator.h"
+#include "module_interface.h"  // Contains the definition of ModuleRegisterFunc
+
+// Load a module from a DLL and call the register function
+void load_module(const char* modulePath, Coordinator* coordinator) {
+    // Load the DLL
+    HMODULE handle = LoadLibraryA(modulePath);
+    if (!handle) {
+        fprintf(stderr, "Error loading module %s\n", modulePath);
+        return;
+    }
+
+    // Get the address of the exported register_module function
+    ModuleRegisterFunc register_module = (ModuleRegisterFunc)GetProcAddress(handle, "register_module");
+    if (!register_module) {
+        fprintf(stderr, "Error finding register_module in %s\n", modulePath);
+        FreeLibrary(handle);
+        return;
+    }
+
+    register_module(coordinator);
+
+}
+
+================
+File: module.c
+================
+// module.c
+#include "module.h"
+#include <stdio.h>
+
+Module* moduleRegistry[MAX_MODULES];
+int moduleCount = 0;
+
+void registerModule(Module* mod) {
+    if (moduleCount < MAX_MODULES) {
+        moduleRegistry[moduleCount++] = mod;
+        printf("Module '%s' registered.\n", mod->name);
+    }
+    else {
+        printf("Module registry is full. Cannot register '%s'.\n", mod->name);
+    }
+}
+
+================
+File: module.h
+================
+// module.h
+#ifndef MODULE_H
+#define MODULE_H
+
+// A generic Module interface.
+typedef struct Module {
+    const char* name;
+    void (*init)(void);        // Called once when the module is registered.
+    void (*update)(float dt);  // Called each frame (or on a schedule).
+    // Optionally, add shutdown or configuration functions.
+} Module;
+
+// Maximum number of modules supported.
+#define MAX_MODULES 32
+
+// A registry for modules.
+extern Module* moduleRegistry[MAX_MODULES];
+extern int moduleCount;
+
+// Function to register a module.
+void registerModule(Module* mod);
+
+#endif // MODULE_H
+
+================
+File: physics_component.h
+================
+// physics_component.h
+
+#ifndef PHYSICS_COMPONENT_H
+#define PHYSICS_COMPONENT_H
+
+#include "components.h" // for Vec3
+#include "ComponentArray.h" 
+
+// Define the physics component
+typedef struct {
+	Vec3 velocity;
+	Vec3 force;
+} Physics;
+
+// Create a physics component array
+DEFINE_COMPONENT_ARRAY(Physics);
+
+#endif // !PHYSICS_COMPONENT_H
+
+================
+File: physics_system.c
+================
+#include "physics_system.h"
+#include <assert.h>
+
+void PhysicsSystem_Init(PhysicsSystem* psys, ComponentManager* cm) {
+    psys->base.count = 0;
+    psys->base.requiredSignature = (1 << COMPONENT_TRANSFORM) |
+        (1 << COMPONENT_RIGID_BODY) |
+        (1 << COMPONENT_GRAVITY);
+    psys->componentManager = cm;
+}
+
+void PhysicsSystem_Update(PhysicsSystem* psys, float dt) {
+    // Retrieve the component arrays from the ComponentManager.
+    TransformComponentArray* transformArray = (TransformComponentArray*)psys->componentManager->componentArrays[COMPONENT_TRANSFORM];
+    RigidBodyComponentArray* rigidBodyArray = (RigidBodyComponentArray*)psys->componentManager->componentArrays[COMPONENT_RIGID_BODY];
+    GravityComponentArray* gravityArray = (GravityComponentArray*)psys->componentManager->componentArrays[COMPONENT_GRAVITY];
+
+    for (int i = 0; i < psys->base.count; i++) {
+        Entity entity = psys->base.entities[i];
+
+        Transform* transform = TransformComponentArray_GetData(transformArray, entity);
+        RigidBody* rigidBody = RigidBodyComponentArray_GetData(rigidBodyArray, entity);
+        Gravity* gravity = GravityComponentArray_GetData(gravityArray, entity);
+
+        // Update the position using the current velocity.
+        transform->position.x += rigidBody->velocity.x * dt;
+        transform->position.y += rigidBody->velocity.y * dt;
+        transform->position.z += rigidBody->velocity.z * dt;
+
+        // Update the velocity based on gravity.
+        rigidBody->velocity.x += gravity->force.x * dt;
+        rigidBody->velocity.y += gravity->force.y * dt;
+        rigidBody->velocity.z += gravity->force.z * dt;
+    }
+}
+
+================
+File: physics_system.h
+================
+#ifndef PHYSICS_SYSTEM_H
+#define PHYSICS_SYSTEM_H
+
+#include "entity_manager.h"
+#include "ComponentManager.h"
+#include "ComponentTypes.h"
+#include "TransformComponent.h"
+#include "rigid_body_component.h"
+#include "gravity_component.h"
+#include "System.h"           
+
+// Base System structure.
+typedef struct {
+    ECS_System base;  // Contains the entity list and the required signature.
+    ComponentManager* componentManager;
+} PhysicsSystem;
+
+// Initializes the physics system by setting its required signature and storing the ComponentManager.
+void PhysicsSystem_Init(PhysicsSystem* psys, ComponentManager* cm);
+
+// Updates the physics system by applying simple physics (Euler integration) to all entities.
+void PhysicsSystem_Update(PhysicsSystem* psys, float dt);
+
+#endif // PHYSICS_SYSTEM_H
+
+================
+File: render3d_system.c
+================
+#include "render3d_system.h"
+#include "TransformComponent.h"
+#include "coordinator.h"
+#include "components.h"
+#include <math.h>
+
+// Access the global entityColors array from main.c
+extern SDL_Color entityColors[MAX_ENTITIES];
+
+// --- 3D Math Helpers ---
+static inline Vec3 vec3_add(Vec3 a, Vec3 b) {
+    Vec3 result = { a.x + b.x, a.y + b.y, a.z + b.z };
+    return result;
+}
+
+static inline Vec3 vec3_scale(Vec3 v, float s) {
+    Vec3 result = { v.x * s, v.y * s, v.z * s };
+    return result;
+}
+
+// Rotate v around X, then Y, then Z (Euler order X->Y->Z)
+static inline Vec3 vec3_rotate_xyz(Vec3 v, float rx, float ry, float rz) {
+    // Rotate around X
+    float cosX = cosf(rx), sinX = sinf(rx);
+    Vec3 rxV = {
+        v.x,
+        v.y * cosX - v.z * sinX,
+        v.y * sinX + v.z * cosX
+    };
+    // Rotate around Y
+    float cosY = cosf(ry), sinY = sinf(ry);
+    Vec3 rxyV = {
+        rxV.x * cosY + rxV.z * sinY,
+        rxV.y,
+        -rxV.x * sinY + rxV.z * cosY
+    };
+    // Rotate around Z
+    float cosZ = cosf(rz), sinZ = sinf(rz);
+    Vec3 rxyzV = {
+        rxyV.x * cosZ - rxyV.y * sinZ,
+        rxyV.x * sinZ + rxyV.y * cosZ,
+        rxyV.z
+    };
+    return rxyzV;
+}
+
+// --- Projection Helper ---
+static inline void projectPoint(const Vec3* point, float fov, float viewerDistance,
+    float aspect,
+    float* outX, float* outY)
+{
+    float factor = fov / (viewerDistance + point->z);
+    *outX = (point->x * factor) * aspect; 
+    *outY = point->y * factor;
+}
+
+// A cube has 8 corners -> 12 triangles -> 36 indices
+// We'll define them in (triangle list) form, each face as two triangles:
+static const int cubeIndices[36] = {
+    // Back face (0,1,2,3)
+    0,1,2, 2,3,0,
+    // Front face (4,5,6,7)
+    4,5,6, 6,7,4,
+    // Left face (0,3,7,4)
+    0,3,7, 7,4,0,
+    // Right face (1,2,6,5)
+    1,2,6, 6,5,1,
+    // Top face (3,2,6,7)
+    3,2,6, 6,7,3,
+    // Bottom face (0,1,5,4)
+    0,1,5, 5,4,0
+};
+
+// Local positions for a unit cube from -0.5..0.5 in each axis
+static const Vec3 localCubeVerts[8] = {
+    { -0.5f, -0.5f, -0.5f }, // 0
+    {  0.5f, -0.5f, -0.5f }, // 1
+    {  0.5f,  0.5f, -0.5f }, // 2
+    { -0.5f,  0.5f, -0.5f }, // 3
+    { -0.5f, -0.5f,  0.5f }, // 4
+    {  0.5f, -0.5f,  0.5f }, // 5
+    {  0.5f,  0.5f,  0.5f }, // 6
+    { -0.5f,  0.5f,  0.5f }  // 7
+};
+
+// Renders a solid cube by sending transformed vertices to SDL_RenderGeometry
+static void renderSolidCube(SDL_Renderer* renderer,
+    Vec3 center,
+    float rotX, float rotY, float rotZ,
+    float scale,
+    SDL_Color color,
+    float fov, float viewerDistance,
+    int screenWidth, int screenHeight)
+{
+    // Transform and project each of the 8 corners
+    SDL_Vertex vertices[8];
+
+    float aspect = (float)screenWidth / (float)screenHeight;
+
+    for (int i = 0; i < 8; i++) {
+        // Start with the local vertex
+        Vec3 v = localCubeVerts[i];
+        // Apply uniform scale.
+        v.x *= scale; v.y *= scale; v.z *= scale;
+
+        // Rotate around X axis.
+        {
+            float cosX = cosf(rotX), sinX = sinf(rotX);
+            float y = v.y * cosX - v.z * sinX;
+            float z = v.y * sinX + v.z * cosX;
+            v.y = y; v.z = z;
+        }
+        // Rotate around Y axis.
+        {
+            float cosY = cosf(rotY), sinY = sinf(rotY);
+            float x = v.x * cosY + v.z * sinY;
+            float z = -v.x * sinY + v.z * cosY;
+            v.x = x; v.z = z;
+        }
+        // Rotate around Z axis.
+        {
+            float cosZ = cosf(rotZ), sinZ = sinf(rotZ);
+            float x = v.x * cosZ - v.y * sinZ;
+            float y = v.x * sinZ + v.y * cosZ;
+            v.x = x; v.y = y;
+        }
+        // Translate to the cube's center.
+        v = (Vec3){ v.x + center.x, v.y + center.y, v.z + center.z };
+
+        // Project to 2D using the updated projectPoint.
+        float projX, projY;
+        projectPoint(&v, fov, viewerDistance, aspect, &projX, &projY);
+        vertices[i].position.x = projX + screenWidth / 2.0f;
+        vertices[i].position.y = -projY + screenHeight / 2.0f;
+
+        // Convert SDL_Color (0–255) to SDL_FColor (0–1).
+        vertices[i].color.r = color.r / 255.0f;
+        vertices[i].color.g = color.g / 255.0f;
+        vertices[i].color.b = color.b / 255.0f;
+        vertices[i].color.a = color.a / 255.0f;
+
+        vertices[i].tex_coord.x = 0;
+        vertices[i].tex_coord.y = 0;
+    }
+
+    SDL_RenderGeometry(renderer, NULL, vertices, 8, cubeIndices, 36);
+
+}
+
+// --- Render3DSystem Functions ---
+void Render3DSystem_Init(Render3DSystem* r3dSys, ComponentManager* cm) {
+    // Only requires the Transform component
+    r3dSys->base.count = 0;
+    r3dSys->base.requiredSignature = (1 << COMPONENT_TRANSFORM);
+    r3dSys->componentManager = cm;
+}
+
+void Render3DSystem_Update(Render3DSystem* r3dSys, float dt,
+    SDL_Renderer* renderer,
+    int screenWidth, int screenHeight)
+{
+    // Increase the FOV and distance to spread out the view
+    float fov = 300.0f;        // bigger FOV => more perspective spread
+    float viewerDistance = 5.0f;
+
+    // Access the Transform array
+    TransformComponentArray* transformArray =
+        (TransformComponentArray*)r3dSys->componentManager->componentArrays[COMPONENT_TRANSFORM];
+
+    // For each entity
+    for (int i = 0; i < r3dSys->base.count; i++) {
+        Entity entity = r3dSys->base.entities[i];
+        Transform* t = TransformComponentArray_GetData(transformArray, entity);
+        if (t) {
+            // Unpack transform
+            Vec3 center = { t->position.x, t->position.y, t->position.z };
+            float rotX = t->rotation.x;
+            float rotY = t->rotation.y;
+            float rotZ = t->rotation.z;
+            float scale = t->scale.x; // uniform scale
+
+            // Use that entity's color
+            SDL_Color color = entityColors[entity];
+
+            // Render the solid cube
+            renderSolidCube(renderer,
+                center,
+                rotX, rotY, rotZ,
+                scale,
+                color,
+                fov, viewerDistance,
+                screenWidth, screenHeight);
+        }
+    }
+}
+
+================
+File: render3d_system.h
+================
+#ifndef RENDER3D_SYSTEM_H
+#define RENDER3D_SYSTEM_H
+
+#include "System.h"
+#include "entity_manager.h"
+#include "ComponentManager.h"
+#include "ComponentTypes.h"
+#include "SDL3/SDL.h"
+#include <math.h>
+
+// Render3DSystem structure that holds a base ECS_System and a pointer to the ComponentManager.
+typedef struct {
+    ECS_System base;            // Contains the list of entities and required signature.
+    ComponentManager* componentManager;
+    // You could add more fields here for projection settings, etc.
+} Render3DSystem;
+
+// Initialize the Render3DSystem with the ComponentManager.
+void Render3DSystem_Init(Render3DSystem* r3dSys, ComponentManager* cm);
+
+// Update the Render3DSystem: for each entity, render a 3D wireframe cube.
+// The renderer, dt, and screen parameters are passed in.
+void Render3DSystem_Update(Render3DSystem* r3dSys, float dt, SDL_Renderer* renderer, int screenWidth, int screenHeight);
+
+#endif // RENDER3D_SYSTEM_H
+
+================
+File: rigid_body_component.h
+================
+#ifndef RIGID_BODY_COMPONENT_H
+#define RIGID_BODY_COMPONENT_H
+
+#include "components.h"
+#include "ComponentArray.h"
+
+typedef struct {
+    Vec3 velocity;
+    Vec3 acceleration;
+} RigidBody;
+
+DEFINE_COMPONENT_ARRAY(RigidBody);
+
+#endif // RIGID_BODY_COMPONENT_H
+
+================
+File: system_manager.h
+================
+#pragma once
+
+// system_manager.h
+#ifndef SYSTEM_MANAGER_H
+#define SYSTEM_MANAGER_H
+
+#include "System.h"
+#include "entity_manager.h"
+#include "ComponentTypes.h"
+#include <assert.h>
+
+#define MAX_SYSTEMS 32
+
+typedef struct {
+    ECS_System* systems[MAX_SYSTEMS]; // Fixed struct name
+    int count;
+} SystemManager;
+
+// Register a system with the system manager
+static inline void SystemManager_AddSystem(SystemManager* mgr, ECS_System* sys) {
+    assert(mgr->count < MAX_SYSTEMS && "System Manager is full");
+    mgr->systems[mgr->count++] = sys;
+}
+
+// Called when an entity is destroyed
+static inline void SystemManager_EntityDestroyed(SystemManager* mgr, Entity entity) {
+    for (int i = 0; i < mgr->count; i++) {
+        ECS_System_RemoveEntity(mgr->systems[i], entity); // Fixed function call
+    }
+}
+
+// Called when the signature of an entity changes
+static inline void SystemManager_EntitySignatureChanged(SystemManager* mgr, Entity entity, Signature entitySignature) {
+    for (int i = 0; i < mgr->count; i++) {
+        ECS_System* sys = mgr->systems[i];
+
+        // Check if entity has all the required components
+        if ((entitySignature & sys->requiredSignature) == sys->requiredSignature) {
+            ECS_System_AddEntity(sys, entity); // Fixed function call
+        }
+        else {
+            ECS_System_RemoveEntity(sys, entity); // Fixed function call
+        }
+    }
+}
+
+#endif // !SYSTEM_MANAGER_H
+
+================
+File: System.h
+================
+// system.h
+#ifndef SYSTEM_H
+#define SYSTEM_H
+
+#include "entity_manager.h" // For Entity and Signature definitions.
+#include <assert.h>
+#include <stdint.h>
+
+#define MAX_SYSTEM_ENTITIES MAX_ENTITIES
+
+typedef struct {
+    Entity entities[MAX_SYSTEM_ENTITIES];
+    int count;
+    Signature requiredSignature;  // Bitmask representing required components.
+    // Add a function pointer for the update function:
+    void (*update)(struct ECS_System* sys, float dt);
+} ECS_System;
+
+// Add an entity to the system (ensuring no duplicates).
+static inline void ECS_System_AddEntity(ECS_System* sys, Entity entity) {
+    for (int i = 0; i < sys->count; i++) {
+        if (sys->entities[i] == entity) {
+            return; // Already present.
+        }
+    }
+    assert(sys->count < MAX_SYSTEM_ENTITIES && "System entity list is full.");
+    sys->entities[sys->count++] = entity;
+}
+
+// Remove an entity from the system.
+static inline void ECS_System_RemoveEntity(ECS_System* sys, Entity entity) {
+    int i;
+    for (i = 0; i < sys->count; i++) {
+        if (sys->entities[i] == entity) {
+            break;
+        }
+    }
+    if (i < sys->count) {
+        for (; i < sys->count - 1; i++) {
+            sys->entities[i] = sys->entities[i + 1];
+        }
+        sys->count--;
+    }
+}
+
+#endif // SYSTEM_H
+
+================
+File: TransformComponent.h
+================
+#pragma once
+
+// TransformComponent.h
+#ifndef TRANSFORM_COMPONENT_H
+#define TRANSFORM_COMPONENT_H
+
+#include "ComponentArray.h"
+#include "Components.h"  // This should include the definition of Transform
+
+// Expand the macro to generate the Transform component array.
+DEFINE_COMPONENT_ARRAY(Transform)
+
+#endif // TRANSFORM_COMPONENT_H
+
+
+
+================================================================
+End of Codebase
+================================================================

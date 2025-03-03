@@ -13,6 +13,9 @@
 #include "physics_system.h"
 #include "Components.h"
 #include "render3d_system.h"
+#include "module_interface.h"
+#include "debug_module.h"
+
 
 // Global so render3d_system.c can use it
 SDL_Color entityColors[MAX_ENTITIES];
@@ -62,6 +65,9 @@ int main(void) {
     // Initialize the coordinator
     Coordinator coordinator;
     Coordinator_Init(&coordinator, entityManager, componentManager, systemManager);
+
+    // Register Modules (such as debug module)
+    register_module(&coordinator);
 
     // Set up randomization
     srand((unsigned)time(NULL));
@@ -145,12 +151,18 @@ int main(void) {
         // Update physics
         PhysicsSystem_Update(physicsSystem, dt);
 
+
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
         // Render 3D cubes
         Render3DSystem_Update(&render3dSystem, dt, renderer, 1280, 720);
+
+        // Demonstrate the Debug module purpose.
+        if (gDebugSystem) {
+            DebugSystem_Run(gDebugSystem, dt);
+        }
 
         SDL_RenderPresent(renderer);
         SDL_Delay(16);

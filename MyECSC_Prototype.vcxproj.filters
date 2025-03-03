@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Render3D">
       <UniqueIdentifier>{08bb49ba-9164-441b-9e10-728c7bb78e3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Modules">
+      <UniqueIdentifier>{4e3ac262-2d7a-46fe-a69b-fc1401801263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.c">
@@ -59,6 +62,18 @@
     </ClCompile>
     <ClCompile Include="render3d_system.c">
       <Filter>Source Files\Render3D</Filter>
+    </ClCompile>
+    <ClCompile Include="module_interface.h">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="debug_module.c">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="module_loader.c">
+      <Filter>Source Files\Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="module.c">
+      <Filter>Source Files\Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -100,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="components.h">
       <Filter>Source Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="module.h">
+      <Filter>Source Files\Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_module.h">
+      <Filter>Source Files\Modules</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
