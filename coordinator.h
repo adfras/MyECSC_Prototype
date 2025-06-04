@@ -5,7 +5,7 @@
 #include "ComponentManager.h"
 #include "system_manager.h"
 #include "ComponentTypes.h"
-#include "Components.h"
+#include "components.h"
 #include "TransformComponent.h"
 #include "rigid_body_component.h"
 #include "gravity_component.h"

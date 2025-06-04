@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include "ComponentArray.h"      // Contains the base IComponentArray struct.
 #include "ComponentTypes.h"      // Contains the ComponentType enum.
-#include "Components.h"          // Now includes definitions for Entity and Transform.
+#include "components.h"          // Contains definitions for Entity and Transform.
 
 // Define the maximum number of entities
 #define MAX_COMPONENT_TYPES 32
