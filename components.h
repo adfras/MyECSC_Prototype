@@ -1,5 +1,5 @@
 #pragma once
-// Components.h
+// components.h
 #ifndef COMPONENTS_H
 #define COMPONENTS_H
 
