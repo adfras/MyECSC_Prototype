@@ -17,7 +17,8 @@ typedef uint32_t Entity;
 
 typedef uint32_t Signature;
 
-// The EntityManager holds available IDs, an array of signatures (one for each entity), and a counts
+// The EntityManager holds available IDs, an array of signatures (one for each entity),
+// and a count of living entities
 typedef struct
 {
 	Entity availableEntities[MAX_ENTITIES];
