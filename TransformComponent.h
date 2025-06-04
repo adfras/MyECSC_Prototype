@@ -5,7 +5,7 @@
 #define TRANSFORM_COMPONENT_H
 
 #include "ComponentArray.h"
-#include "components.h"  // Provides the Transform definition
+#include "components.h"  // Contains the Transform definition
 
 // Expand the macro to generate the Transform component array.
 DEFINE_COMPONENT_ARRAY(Transform)
