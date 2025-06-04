@@ -35,7 +35,9 @@ Thumbs.db
 # Ignore build directories
 x64/
 Debug/
+debug/
 Release/
+release/
 
 repomix-output.txt
 
