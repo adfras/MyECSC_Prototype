@@ -1,7 +1,7 @@
 //ComponentManager.c
 #include "ComponentManager.h"
 #include "ComponentArray.h"
-#include "Components.h" 
+#include "components.h"
 #include "TransformComponent.h" 
 
 #include <assert.h>
