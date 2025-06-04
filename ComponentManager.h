@@ -8,7 +8,7 @@
 #include "ComponentTypes.h"      // Contains the ComponentType enum.
 #include "Components.h"          // Now includes definitions for Entity and Transform.
 
-// Define the maximum number of entities
+// Define the maximum number of component types.
 #define MAX_COMPONENT_TYPES 32
 
 // The ComponentManager is a collection of component arrays.
