@@ -11,7 +11,7 @@
 #include "gravity_component.h"
 #include "rigid_body_component.h"
 #include "physics_system.h"
-#include "Components.h"
+#include "components.h"
 #include "render3d_system.h"
 #include "module_interface.h"
 #include "debug_module.h"
