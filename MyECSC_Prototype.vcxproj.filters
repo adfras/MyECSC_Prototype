@@ -1,126 +1,98 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+      <Extensions>c</Extensions>
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Source Files\EntityManager">
-      <UniqueIdentifier>{2c594161-3257-421c-ba2c-a00d85bff169}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ComponentManager">
-      <UniqueIdentifier>{9a4c6392-bfb5-48bc-a923-d3f888eee8b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\System">
-      <UniqueIdentifier>{5fab541b-7fbb-45dd-8313-e74f432b0e2c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Physics">
-      <UniqueIdentifier>{98fa73de-90d8-4002-a4f6-75d19bbd7d26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Macro">
-      <UniqueIdentifier>{fa32c8a9-748a-4161-b6cc-d71713558aa2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Coordinator">
-      <UniqueIdentifier>{9c65f4b4-583d-4637-8b80-7222e1f96b82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{9ed59cfa-6ce1-46e2-815a-9daf955489b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Render3D">
-      <UniqueIdentifier>{08bb49ba-9164-441b-9e10-728c7bb78e3b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Modules">
-      <UniqueIdentifier>{4e3ac262-2d7a-46fe-a69b-fc1401801263}</UniqueIdentifier>
+      <Extensions>h</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.c">
+    <ClCompile Include="src\ComponentManager.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="entity_manager.c">
-      <Filter>Source Files\EntityManager</Filter>
+    <ClCompile Include="src\coordinator.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ComponentManager.c">
-      <Filter>Source Files\ComponentManager</Filter>
+    <ClCompile Include="src\debug_module.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="physics_system.h">
-      <Filter>Source Files\Physics</Filter>
+    <ClCompile Include="src\entity_manager.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="physics_system.c">
-      <Filter>Source Files\Physics</Filter>
+    <ClCompile Include="src\main.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="coordinator.c">
-      <Filter>Source Files\Coordinator</Filter>
+    <ClCompile Include="src\module.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render3d_system.c">
-      <Filter>Source Files\Render3D</Filter>
+    <ClCompile Include="src\module_loader.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="module_interface.h">
-      <Filter>Source Files\Modules</Filter>
+    <ClCompile Include="src\physics_system.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="debug_module.c">
-      <Filter>Source Files\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="module_loader.c">
-      <Filter>Source Files\Modules</Filter>
-    </ClCompile>
-    <ClCompile Include="module.c">
-      <Filter>Source Files\Modules</Filter>
+    <ClCompile Include="src\render3d_system.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="entity_manager.h">
-      <Filter>Source Files\EntityManager</Filter>
+    <ClInclude Include="include\ComponentArray.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentArray.h">
-      <Filter>Source Files\Macro</Filter>
+    <ClInclude Include="include\ComponentManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentTypes.h">
-      <Filter>Source Files\ComponentManager</Filter>
+    <ClInclude Include="include\components.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentManager.h">
-      <Filter>Source Files\ComponentManager</Filter>
+    <ClInclude Include="include\ComponentTypes.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>Source Files\ComponentManager</Filter>
+    <ClInclude Include="include\coordinator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="System.h">
-      <Filter>Source Files\System</Filter>
+    <ClInclude Include="include\debug_module.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="system_manager.h">
-      <Filter>Source Files\System</Filter>
+    <ClInclude Include="include\entity_manager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="physics_component.h">
-      <Filter>Source Files\Physics</Filter>
+    <ClInclude Include="include\gravity_component.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="coordinator.h">
-      <Filter>Source Files\Coordinator</Filter>
+    <ClInclude Include="include\module.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gravity_component.h">
-      <Filter>Source Files\Components</Filter>
+    <ClInclude Include="include\module_interface.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rigid_body_component.h">
-      <Filter>Source Files\Components</Filter>
+    <ClInclude Include="include\module_loader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render3d_system.h">
-      <Filter>Source Files\Render3D</Filter>
+    <ClInclude Include="include\physics_component.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="components.h">
-      <Filter>Source Files\Components</Filter>
+    <ClInclude Include="include\physics_system.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="module.h">
-      <Filter>Source Files\Modules</Filter>
+    <ClInclude Include="include\render3d_system.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="debug_module.h">
-      <Filter>Source Files\Modules</Filter>
+    <ClInclude Include="include\rigid_body_component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\System.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\system_manager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformComponent.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
