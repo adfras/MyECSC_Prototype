@@ -21,6 +21,15 @@ A helper script `run.sh` is included to build and execute the demo program. It w
 
 The script compiles the sources in `src/` with `gcc` and produces the `MyECSC_Prototype` executable which is then run automatically.
 
+### Windows
+
+The repository includes a Visual Studio solution for building on Windows. To compile using the Microsoft toolchain:
+
+1. Install [vcpkg](https://github.com/microsoft/vcpkg) and run `vcpkg install sdl3` to provide the SDL3 dependency.
+2. Open `MyECSC_Prototype.sln` in Visual Studio.
+3. Select either the `Debug` or `Release` configuration and build the solution.
+4. Run the resulting `MyECSC_Prototype.exe` from the build output directory.
+
 ## Tests
 
 The `tests` directory contains a simple test for the entity manager. To build and run the test manually, execute:
