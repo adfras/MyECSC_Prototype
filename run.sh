@@ -19,16 +19,16 @@ else
 fi
 
 # Source files needed to build the demo
-SRCS="main.c coordinator.c entity_manager.c ComponentManager.c physics_system.c debug_module.c module.c"
+SRCS="src/main.c src/coordinator.c src/entity_manager.c src/ComponentManager.c src/physics_system.c src/debug_module.c src/module.c"
 if [ "$USE_SDL" -eq 1 ]; then
-    SRCS="$SRCS render3d_system.c"
+    SRCS="$SRCS src/render3d_system.c"
     CFLAGS_EXTRA="-DUSE_SDL"
 else
     CFLAGS_EXTRA=""
 fi
 
 # Build the executable
-gcc -std=c11 $CFLAGS_EXTRA $SDL_CFLAGS -I. $SRCS -o MyECSC_Prototype $SDL_LIBS
+gcc -std=c11 $CFLAGS_EXTRA $SDL_CFLAGS -Iinclude $SRCS -o MyECSC_Prototype $SDL_LIBS
 
 # Run the program
 ./MyECSC_Prototype
