@@ -4,7 +4,7 @@
 
 /*
 Build instructions:
-    gcc -std=c11 -I. entity_manager.c tests/entity_manager_test.c -o entity_manager_test
+    gcc -std=c11 -Iinclude src/entity_manager.c tests/entity_manager_test.c -o entity_manager_test
 */
 int main(void) {
     EntityManager manager;

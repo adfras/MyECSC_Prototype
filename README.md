@@ -10,14 +10,14 @@ A helper script `run.sh` is included to build and execute the demo program. It w
 ./run.sh
 ```
 
-The script compiles the sources with `gcc` and produces the `MyECSC_Prototype` executable which is then run automatically.
+The script compiles the sources in `src/` with `gcc` and produces the `MyECSC_Prototype` executable which is then run automatically.
 
 ## Tests
 
 The `tests` directory contains a simple test for the entity manager. To build and run the test manually, execute:
 
 ```bash
-gcc -std=c11 -I. entity_manager.c tests/entity_manager_test.c -o entity_manager_test
+gcc -std=c11 -Iinclude src/entity_manager.c tests/entity_manager_test.c -o entity_manager_test
 ./entity_manager_test
 ```
 
@@ -25,7 +25,7 @@ If all assertions succeed the program prints `"Entity manager test passed"`.
 
 ## Repository Layout
 
-- Source files (`*.c`) and headers (`*.h`) are located in the project root.
+- Source files are in `src/` and headers are in `include/`.
 - `tests/` contains unit tests.
 - `run.sh` builds and runs the demo.
 
