@@ -1,4 +1,5 @@
 #include "render3d_system.h"
+#ifdef USE_SDL
 #include "TransformComponent.h"
 #include "coordinator.h"
 #include "components.h"
@@ -133,7 +134,7 @@ static void renderSolidCube(SDL_Renderer* renderer,
         vertices[i].position.x = projX + screenWidth / 2.0f;
         vertices[i].position.y = -projY + screenHeight / 2.0f;
 
-        // Convert SDL_Color (0–255) to SDL_FColor (0–1).
+        // Convert SDL_Color (0-255) to SDL_FColor (0-1).
         vertices[i].color.r = color.r / 255.0f;
         vertices[i].color.g = color.g / 255.0f;
         vertices[i].color.b = color.b / 255.0f;
@@ -193,3 +194,4 @@ void Render3DSystem_Update(Render3DSystem* r3dSys, float dt,
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
+#ifdef USE_SDL
 #include <SDL3/SDL.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -12,13 +14,17 @@
 #include "rigid_body_component.h"
 #include "physics_system.h"
 #include "components.h"
+#ifdef USE_SDL
 #include "render3d_system.h"
+#endif
 #include "module_interface.h"
 #include "debug_module.h"
 
 
 // Global so render3d_system.c can use it
+#ifdef USE_SDL
 SDL_Color entityColors[MAX_ENTITIES];
+#endif
 
 int main(void) {
     // --- Initialize ECS Managers ---
@@ -58,9 +64,11 @@ int main(void) {
     PhysicsSystem_Init(physicsSystem, componentManager);
     SystemManager_AddSystem(systemManager, (ECS_System*)physicsSystem);
 
+#ifdef USE_SDL
     Render3DSystem render3dSystem;
     Render3DSystem_Init(&render3dSystem, componentManager);
     SystemManager_AddSystem(systemManager, (ECS_System*)&render3dSystem);
+#endif
 
     // Initialize the coordinator
     Coordinator coordinator;
@@ -104,16 +112,19 @@ int main(void) {
         };
 
         // Assign random color
+#ifdef USE_SDL
         entityColors[entity].r = rand() % 256;
         entityColors[entity].g = rand() % 256;
         entityColors[entity].b = rand() % 256;
         entityColors[entity].a = 255;
+#endif
 
         Coordinator_AddGravity(&coordinator, entity, g);
         Coordinator_AddRigidBody(&coordinator, entity, rb);
         Coordinator_AddTransform(&coordinator, entity, t);
     }
 
+#ifdef USE_SDL
     // ---- Initialize SDL3 ----
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init Error: %s\n", SDL_GetError());
@@ -151,7 +162,6 @@ int main(void) {
         // Update physics
         PhysicsSystem_Update(physicsSystem, dt);
 
-
         // Clear screen
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
@@ -176,6 +186,20 @@ int main(void) {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+#else
+    // Headless mode: run a short simulation and print the position of the first entity
+    float dt = 0.016f;
+    for (int i = 0; i < 100; i++) {
+        PhysicsSystem_Update(physicsSystem, dt);
+        if (gDebugSystem) {
+            DebugSystem_Run(gDebugSystem, dt);
+        }
+        Transform* t = TransformComponentArray_GetData(transformArray, 0);
+        if (t) {
+            printf("Step %d: pos=(%.2f, %.2f, %.2f)\n", i, t->position.x, t->position.y, t->position.z);
+        }
+    }
+#endif
 
     free(physicsSystem);
     free(rigidBodyArray);
